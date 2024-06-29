@@ -4,7 +4,9 @@ import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JButton;
 import javax.swing.SwingConstants;
-import javax.swing.JTextPane;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
 import com.toedter.calendar.JCalendar;
 import java.awt.Component;
 import java.awt.GridBagLayout;
@@ -32,9 +34,9 @@ public class GUI extends JFrame {
 	}
 
 	public GUI() {
-		setTitle("EasyHotel");
+		setTitle("Hotel Finder");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100,500, 600);
+		setBounds(100, 100,600, 700);
 		contentPane = new JPanel();
 
 		setContentPane(contentPane);
@@ -53,15 +55,15 @@ public class GUI extends JFrame {
 		gbc_cityLabel.gridx = 0;
 		gbc_cityLabel.gridy = 0;
 		contentPane.add(cityLabel, gbc_cityLabel);
-		
-		JFormattedTextField formattedTextField = new JFormattedTextField();
-		formattedTextField.setAlignmentY(Component.BOTTOM_ALIGNMENT);
+
+		JFormattedTextField cityTextField = new JFormattedTextField();
+		cityTextField.setAlignmentY(Component.BOTTOM_ALIGNMENT);
 		GridBagConstraints gbc_formattedTextField = new GridBagConstraints();
 		gbc_formattedTextField.fill = GridBagConstraints.HORIZONTAL;
 		gbc_formattedTextField.insets = new Insets(0, 0, 5, 0);
 		gbc_formattedTextField.gridx = 1;
 		gbc_formattedTextField.gridy = 0;
-		contentPane.add(formattedTextField, gbc_formattedTextField);
+		contentPane.add(cityTextField, gbc_formattedTextField);
 
 		JLabel fromDateLabel = new JLabel("From Date:");
 		fromDateLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -72,13 +74,13 @@ public class GUI extends JFrame {
 		gbc_fromDateLabel.gridy = 1;
 		contentPane.add(fromDateLabel, gbc_fromDateLabel);
 
-		JCalendar calendar_1 = new JCalendar();
+		JCalendar fromDateCalendar = new JCalendar();
 		GridBagConstraints gbc_calendar_1 = new GridBagConstraints();
 		gbc_calendar_1.fill = GridBagConstraints.BOTH;
 		gbc_calendar_1.insets = new Insets(0, 0, 5, 0);
 		gbc_calendar_1.gridx = 1;
 		gbc_calendar_1.gridy = 1;
-		contentPane.add(calendar_1, gbc_calendar_1);
+		contentPane.add(fromDateCalendar, gbc_calendar_1);
 
 		JLabel toDateLabel = new JLabel("To Date:");
 		toDateLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -89,13 +91,13 @@ public class GUI extends JFrame {
 		gbc_toDateLabel.gridy = 2;
 		contentPane.add(toDateLabel, gbc_toDateLabel);
 
-		JCalendar calendar = new JCalendar();
+		JCalendar toDateCalendar = new JCalendar();
 		GridBagConstraints gbc_calendar = new GridBagConstraints();
 		gbc_calendar.fill = GridBagConstraints.BOTH;
 		gbc_calendar.insets = new Insets(0, 0, 5, 0);
 		gbc_calendar.gridx = 1;
 		gbc_calendar.gridy = 2;
-		contentPane.add(calendar, gbc_calendar);
+		contentPane.add(toDateCalendar, gbc_calendar);
 
 
 		JButton searchButton = new JButton("Search");
@@ -105,5 +107,23 @@ public class GUI extends JFrame {
 		gbc_searchButton.gridx = 0;
 		gbc_searchButton.gridy = 3;
 		contentPane.add(searchButton, gbc_searchButton);
-	}
+
+		searchButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String city = cityTextField.getText();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyy");
+                String fromDate = dateFormat.format(fromDateCalendar.getDate());
+                String toDate = dateFormat.format(toDateCalendar.getDate());
+                search(city, fromDate, toDate);
+	         }
+	        });
+	    }
+	
+	 private void search(String city, String fromDate, String toDate) {
+	        // Implement the search functionality here
+	        System.out.println("City: " + city);
+	        System.out.println("From Date: " + fromDate);
+	        System.out.println("To Date: " + toDate);
+	    }
 }
+
