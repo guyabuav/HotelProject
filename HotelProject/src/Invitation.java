@@ -1,4 +1,5 @@
 import java.util.GregorianCalendar;
+import java.util.Scanner;
 
 public class Invitation {
     private String invitationId;
@@ -128,4 +129,91 @@ public class Invitation {
                 ", hotel=" + hotel +
                 '}';
     }
+    
+ // Method to add guests
+    public String addGuest(int additionalGuests) {
+        Room room = hotel.getRoomById(roomId);
+        if (room == null) {
+            return "Error: Room not found.";
+        }
+        int newGuestCount = numOfGuests + additionalGuests;
+        if (newGuestCount > room.getMaxCapacity()) {
+            return "Error: Number of guests exceeds room capacity.";
+        }
+        numOfGuests = newGuestCount;
+        return "Guests added successfully. New number of guests: " + numOfGuests;
+    }
+
+    // Method to remove guests
+    public String removeGuest(int guestsToRemove) {
+        int newGuestCount = numOfGuests - guestsToRemove;
+        if (newGuestCount < 1) {
+            return "Error: Number of guests cannot be less than 1.";
+        }
+        numOfGuests = newGuestCount;
+        return "Guests removed successfully. New number of guests: " + numOfGuests;
+    }
+    
+    // Method to update invitation details
+    public void updateInvitationDetails() {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Which field do you want to update? (numOfGuests/startDate/endDate/roomId/price)");
+        String field = scanner.nextLine().toLowerCase();
+
+        System.out.println("Enter the new value for " + field + ":");
+        switch (field) {
+            case "numofguests":
+                int newNumOfGuests = Integer.parseInt(scanner.nextLine());
+                Room room = hotel.getRoomById(roomId);
+                if (room == null || newNumOfGuests > room.getMaxCapacity()) {
+                    System.out.println("Error: Number of guests exceeds room capacity or room not found.");
+                } else {
+                    setNumOfGuests(newNumOfGuests);
+                    System.out.println("numOfGuests updated successfully.");
+                }
+                break;
+            case "startdate":
+                String[] startDateInput = scanner.nextLine().split("-");
+                GregorianCalendar newStartDate = new GregorianCalendar(
+                        Integer.parseInt(startDateInput[0]),
+                        Integer.parseInt(startDateInput[1]) - 1,
+                        Integer.parseInt(startDateInput[2])
+                );
+                setStartDate(newStartDate);
+                System.out.println("startDate updated successfully.");
+                break;
+            case "enddate":
+                String[] endDateInput = scanner.nextLine().split("-");
+                GregorianCalendar newEndDate = new GregorianCalendar(
+                        Integer.parseInt(endDateInput[0]),
+                        Integer.parseInt(endDateInput[1]) - 1,
+                        Integer.parseInt(endDateInput[2])
+                );
+                setEndDate(newEndDate);
+                System.out.println("endDate updated successfully.");
+                break;
+            case "roomid":
+                String newRoomId = scanner.nextLine();
+                setRoomId(newRoomId);
+                System.out.println("roomId updated successfully.");
+                break;
+            case "price":
+                double newPrice = Double.parseDouble(scanner.nextLine());
+                setPrice(newPrice);
+                System.out.println("price updated successfully.");
+                break;
+            default:
+                System.out.println("Invalid field specified.");
+                break;
+        }
+    }
+    
+    public void sendInvitation(Customer customer) {
+        String phoneNumber = customer.getTelephone();
+        // Methodically send the message to the customer's phone number
+        System.out.println("Sending invitation to phone number: " + phoneNumber);
+        // Simulating sending message
+        System.out.println("Invitation sent successfully to " + phoneNumber);
+}
 }

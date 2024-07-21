@@ -1,6 +1,6 @@
 public class Room {
     private int maxCapacity;
-    private String roomId;
+    public String roomId;
 
     // Default constructor
     public Room() {
@@ -27,6 +27,10 @@ public class Room {
 
     public void setRoomId(String roomId) {
         this.roomId = roomId;
+    }
+    
+    public boolean capacityCheck(int numOfGuests) {
+        return numOfGuests <= maxCapacity;
     }
 
     // Optional: toString method for easier debugging and logging
