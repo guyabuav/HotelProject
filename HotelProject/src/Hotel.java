@@ -2,33 +2,37 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class Hotel {
     private String telephone;
     private int stars;
-    private String hotelId;
+    private int hotelId;
+    private static int nextHotelId = 1;
     public int numOfRooms;
     private String city;
     private String hotelName;
     private List<Room> rooms;
-    private List<Invitation> invitations;
+    private List<Reservation> reservations;
+    private List<PaymentConfirmation> confirmations;
+
 
     // Default constructor
     public Hotel() {
+    	this.hotelId = nextHotelId++;
         this.rooms = new ArrayList<>();
-        this.invitations = new ArrayList<>();
+        this.reservations = new ArrayList<>();
+        this.confirmations = new ArrayList<>();
     }
 
     // Parameterized constructor
-    public Hotel(String telephone, int stars, String hotelId, int numOfRooms, String city, String hotelName) {
-        this.telephone = telephone;
-        this.stars = stars;
-        this.hotelId = hotelId;
-        this.numOfRooms = numOfRooms;
-        this.city = city;
-        this.hotelName = hotelName;
-        this.rooms = new ArrayList<>();
-        this.invitations = new ArrayList<>();
+    public Hotel(String telephone, int stars, int numOfRooms, String city, String hotelName) {
+    	   this();
+           this.telephone = telephone;
+           this.stars = stars;
+           this.numOfRooms = numOfRooms;
+           this.city = city;
+           this.hotelName = hotelName;
     }
 
     // Getters and Setters
@@ -52,11 +56,11 @@ public class Hotel {
         }
     }
 
-    public String getHotelId() {
+    public int getHotelId() {
         return hotelId;
     }
 
-    public void setHotelId(String hotelId) {
+    public void setHotelId(int hotelId) {
         this.hotelId = hotelId;
     }
 
@@ -92,80 +96,115 @@ public class Hotel {
         this.rooms = rooms;
     }
 
-    public List<Invitation> getInvitations() {
-        return invitations;
+    public List<Reservation> getReservations() {
+        return reservations;
     }
 
-    public void setInvitations(List<Invitation> invitations) {
-        this.invitations = invitations;
+    public void setReservations(List<Reservation> Reservations) {
+        this.reservations = Reservations;
     }
 
-    // Optional: toString method for easier debugging and logging
+    public void setConfirmations(List<PaymentConfirmation> confirmation) {
+    	this.confirmations = confirmation;
+    }
+    
+    public List<PaymentConfirmation> getConfirmation(){
+    	return confirmations;
+    }
+    
     @Override
     public String toString() {
         return "Hotel{" +
-                "telephone='" + telephone + '\'' +
+                "hotelId=" + hotelId +
                 ", stars=" + stars +
-                ", hotelId='" + hotelId + '\'' +
-                ", numOfRooms=" + numOfRooms +
+                ", reservations=" + reservations.stream().map(r -> r.getReservationId()).collect(Collectors.toList()) + // Avoid full reservation objects
                 ", city='" + city + '\'' +
                 ", hotelName='" + hotelName + '\'' +
-                ", rooms=" + rooms +
-                ", invitations=" + invitations +
                 '}';
     }
 
+//    
+// // Method to search for available rooms
+//    public List<Room> searchRoom(List<Hotel> hotels) {
+//        Scanner scanner = new Scanner(System.in);
+//
+//        // Prompt the user to select a hotel by ID
+//        System.out.println("Select a hotel by ID:");
+//        for (Hotel hotel : hotels) {
+//            System.out.println(hotel.getHotelId() + ": " + hotel.getHotelName() + " in " + hotel.getCity());
+//        }
+//        int hotelId = Integer.parseInt(scanner.nextLine());
+//        Hotel selectedHotel = null;
+//        for (Hotel hotel : hotels) {
+//            if (hotel.getHotelId() == hotelId) {
+//                selectedHotel = hotel;
+//                break;
+//            }
+//        }
+//        if (selectedHotel == null) {
+//            System.out.println("Invalid hotel ID. No hotel found.");
+//            return new ArrayList<>();
+//        }
+//
+//        // Prompt the user to enter the search criteria
+//        System.out.println("Enter start date (yyyy-mm-dd):");
+//        String[] startDateInput = scanner.nextLine().split("-");
+//        GregorianCalendar startDate = new GregorianCalendar(
+//                Integer.parseInt(startDateInput[0]),
+//                Integer.parseInt(startDateInput[1]) - 1,
+//                Integer.parseInt(startDateInput[2])
+//        );
+//
+//        System.out.println("Enter end date (yyyy-mm-dd):");
+//        String[] endDateInput = scanner.nextLine().split("-");
+//        GregorianCalendar endDate = new GregorianCalendar(
+//                Integer.parseInt(endDateInput[0]),
+//                Integer.parseInt(endDateInput[1]) - 1,
+//                Integer.parseInt(endDateInput[2])
+//        );
+//
+//        System.out.println("Enter room capacity:");
+//        int roomCapacity = Integer.parseInt(scanner.nextLine());
+//
+//        // Find available rooms in the selected hotel
+//        List<Room> availableRooms = new ArrayList<>();
+//        for (Room room : selectedHotel.getRooms()) {
+//            if (room.getMaxCapacity() >= roomCapacity && selectedHotel.checkAvailableRooms(startDate, endDate).contains(room.getRoomId())) {
+//                availableRooms.add(room);
+//            }
+//        }
+//
+//        if (availableRooms.isEmpty()) {
+//            System.out.println("No available rooms found.");
+//        } else {
+//            System.out.println("Available rooms:");
+//            for (Room room : availableRooms) {
+//                System.out.println(room);
+//            }
+//        }
+//
+//        return availableRooms;
+//    }
     
- // Method to search for available rooms
-    public List<Room> searchRoom(Hotel hotel) {
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.println("Enter start date (yyyy-mm-dd):");
-        String[] startDateInput = scanner.nextLine().split("-");
-        GregorianCalendar startDate = new GregorianCalendar(
-                Integer.parseInt(startDateInput[0]),
-                Integer.parseInt(startDateInput[1]) - 1,
-                Integer.parseInt(startDateInput[2])
-        );
-
-        System.out.println("Enter end date (yyyy-mm-dd):");
-        String[] endDateInput = scanner.nextLine().split("-");
-        GregorianCalendar endDate = new GregorianCalendar(
-                Integer.parseInt(endDateInput[0]),
-                Integer.parseInt(endDateInput[1]) - 1,
-                Integer.parseInt(endDateInput[2])
-        );
-
-        System.out.println("Enter room capacity:");
-        int roomCapacity = Integer.parseInt(scanner.nextLine());
-
-        List<Room> availableRooms = new ArrayList<>();
-        for (Room room : hotel.getRooms()) {
-            if (room.getMaxCapacity() >= roomCapacity && hotel.checkAvailableRooms(startDate, endDate).contains(room.getRoomId())) {
-                availableRooms.add(room);
-            }
-        }
-
-        return availableRooms;
-    }
+    
     // Get room by ID
-    public Room getRoomById(String roomId) {
+    public Room getRoomById(int roomId) {
         for (Room room : rooms) {
-            if (room.getRoomId().equals(roomId)) {
+            if (room.getRoomId() == roomId) {
                 return room;
             }
         }
         return null; // Room not found
     }
 
-    // Check available rooms between start and end dates
-    public List<String> checkAvailableRooms(GregorianCalendar startDate, GregorianCalendar endDate) {
-        List<String> availableRooms = new ArrayList<>();
+ // Check available rooms between start and end dates
+    public List<Integer> checkAvailableRooms(GregorianCalendar startDate, GregorianCalendar endDate) {
+        List<Integer> availableRooms = new ArrayList<>();
         for (Room room : rooms) {
             boolean isAvailable = true;
-            for (Invitation invitation : invitations) {
-                if (invitation.getRoomId().equals(room.getRoomId())) {
-                    if (!(endDate.before(invitation.getStartDate()) || startDate.after(invitation.getEndDate()))) {
+            for (Reservation reservation : reservations) {
+                if (reservation.getRoomId() == room.getRoomId()) {
+                    if (!(endDate.before(reservation.getStartDate()) || startDate.after(reservation.getEndDate()))) {
                         isAvailable = false;
                         break;
                     }
@@ -178,13 +217,13 @@ public class Hotel {
         return availableRooms;
     }
 
-    // Add invitation
-    public void addInvitation(Invitation invitation) {
-        invitations.add(invitation);
+    // Add Reservation
+    public void addReservation(Reservation Reservation) {
+        reservations.add(Reservation);
     }
     
  // Method to return room details
-    public String returnRoomDetails(String roomId) {
+    public String returnRoomDetails(int roomId) {
         Room room = getRoomById(roomId);
         if (room == null) {
             return "Error: Room not found.";
@@ -192,19 +231,11 @@ public class Hotel {
         return room.toString();
     }
 
-    // Method to add a room by arguments
-    public String addRoom(String roomId, int maxCapacity) {
-        if (getRoomById(roomId) != null) {
-            return "Error: Room with this ID already exists.";
-        }
-        Room room = new Room(maxCapacity, roomId);
-        rooms.add(room);
-        numOfRooms++;
-        return "Room added successfully: " + room.toString();
-    }
+   
+
 
     // Method to update room details
-    public String updateRoomDetails(String roomId) {
+    public String updateRoomDetails(int roomId) {
         Room room = getRoomById(roomId);
         if (room == null) {
             return "Error: Room not found.";
@@ -212,13 +243,13 @@ public class Hotel {
 
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("Which field do you want to update? (roomId/maxCapacity)");
+        System.out.println("Which field do you want to update? (roomId/maxCapacity/pricePerNight)");
         String field = scanner.nextLine().toLowerCase();
 
         System.out.println("Enter the new value for " + field + ":");
         switch (field) {
             case "roomid":
-                String newRoomId = scanner.nextLine();
+                int newRoomId = Integer.parseInt(scanner.nextLine());
                 if (getRoomById(newRoomId) != null) {
                     return "Error: Room with this new ID already exists.";
                 }
@@ -227,6 +258,10 @@ public class Hotel {
             case "maxcapacity":
                 int newMaxCapacity = Integer.parseInt(scanner.nextLine());
                 room.setMaxCapacity(newMaxCapacity);
+                break;
+            case "pricepernight":
+                double newPricePerNight = Double.parseDouble(scanner.nextLine());
+                room.setPricePerNight(newPricePerNight);
                 break;
             default:
                 return "Error: Invalid field specified.";
@@ -244,6 +279,11 @@ public class Hotel {
         rooms.add(room);
         numOfRooms++;
         return "Room added successfully: " + room.toString();
+    }
+    
+    // Method to add a payment confirmation
+    public void addPaymentConfirmation(PaymentConfirmation confirmation) {
+    	confirmations.add(confirmation);
     }
 }
 

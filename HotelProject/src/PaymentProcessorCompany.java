@@ -3,29 +3,33 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 public class PaymentProcessorCompany {
-    private String companyId;
+    private static int nextCompanyId = 1;
+    private int companyId;
     private String telephone;
     private String address;
-    private List<Payment> payments;
+    public String companyName;
+    public List<Payment> payments;
 
     // Default constructor
     public PaymentProcessorCompany() {
     }
 
     // Parameterized constructor
-    public PaymentProcessorCompany(String companyId, String telephone, String address) {
-        this.companyId = companyId;
+    public PaymentProcessorCompany(String telephone, String address, String name) {
+    	
+        this.companyId = nextCompanyId++;
         this.telephone = telephone;
         this.address = address;
         this.payments = new ArrayList<>();
+        this.companyName = name;
     }
 
     // Getters and Setters
-    public String getCompanyId() {
+    public int getCompanyId() {
         return companyId;
     }
 
-    public void setCompanyId(String companyId) {
+    public void setCompanyId(int companyId) {
         this.companyId = companyId;
     }
 
@@ -35,6 +39,14 @@ public class PaymentProcessorCompany {
 
     public void setTelephone(String telephone) {
         this.telephone = telephone;
+    }
+    
+    public String getName() {
+        return this.companyName;
+    }
+
+    public void setName(String companyName) {
+        this.companyName = companyName;
     }
 
     public String getAddress() {
@@ -49,7 +61,7 @@ public class PaymentProcessorCompany {
 
     // Method to validate a payment
     public String paymentValidation(Payment payment) {
-        if (payment.getPaymentId() == null || payment.getPaymentId().isEmpty()) {
+        if (payment.getPaymentId() == 0 || payment.getPaymentId() < 0) {
             return "Error: Payment ID is null or empty.";
         }
         if (payment.getPrice() <= 0) {
@@ -65,9 +77,10 @@ public class PaymentProcessorCompany {
     }
 
     // Method to send payment confirmation
-    public void sendPaymentConfirmation(PaymentConfirmation confirmation) {
+    public PaymentConfirmation sendPaymentConfirmation(PaymentConfirmation confirmation) {
         // Simulating sending payment confirmation to the hotel
         System.out.println("Sending payment confirmation: " + confirmation);
+        return confirmation;
     }
     
 
@@ -84,6 +97,7 @@ public class PaymentProcessorCompany {
                 this, // PaymentProcessorCompany reference
                 hotel // Hotel reference
             );
+            hotel.addPaymentConfirmation(confirmation);
             sendPaymentConfirmation(confirmation);
         } else {
             System.out.println(validationMessage);

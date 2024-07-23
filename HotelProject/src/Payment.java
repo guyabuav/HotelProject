@@ -1,7 +1,8 @@
 import java.util.GregorianCalendar;
 
 public class Payment {
-    private String paymentId;
+    private static int nextPaymentId = 1;
+    private int paymentId;
     private String paymentMethod;
     private GregorianCalendar paymentDate;
     private double price;
@@ -13,8 +14,8 @@ public class Payment {
     }
 
     // Parameterized constructor
-    public Payment(String paymentId, String paymentMethod, GregorianCalendar paymentDate, double price, Customer customer, PaymentProcessorCompany paymentProcessorCompany) {
-        this.paymentId = paymentId;
+    public Payment(String paymentMethod, GregorianCalendar paymentDate, double price, Customer customer, PaymentProcessorCompany paymentProcessorCompany) {
+    	this.paymentId = nextPaymentId++;
         this.paymentMethod = paymentMethod;
         this.paymentDate = paymentDate;
         this.price = price;
@@ -23,11 +24,11 @@ public class Payment {
     }
 
     // Getters and Setters
-    public String getPaymentId() {
+    public int getPaymentId() {
         return paymentId;
     }
 
-    public void setPaymentId(String paymentId) {
+    public void setPaymentId(int paymentId) {
         this.paymentId = paymentId;
     }
 

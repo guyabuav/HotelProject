@@ -1,41 +1,42 @@
 import java.util.GregorianCalendar;
 import java.util.Scanner;
 
-public class Invitation {
-    private String invitationId;
+public class Reservation {
+    private static int nextResId = 1;
+    private int reservationId;
     private int numOfGuests;
-    private GregorianCalendar invitationDate;
+    private GregorianCalendar ReservationDate;
     private GregorianCalendar startDate;
     private GregorianCalendar endDate;
-    private String roomId;
+    private int roomId;
     private double price;
     private Customer customer;
     private Hotel hotel;
 
     // Default constructor
-    public Invitation() {
+    public Reservation() {
     }
 
     // Parameterized constructor
-    public Invitation(String invitationId, int numOfGuests, GregorianCalendar invitationDate, GregorianCalendar startDate, GregorianCalendar endDate, String roomId, double price, Customer customer, Hotel hotel) {
-        this.invitationId = invitationId;
-        setNumOfGuests(numOfGuests); // Use setter to validate numOfGuests
-        this.invitationDate = invitationDate;
-        setStartDate(startDate); // Use setter to validate startDate
-        setEndDate(endDate); // Use setter to validate endDate
-        this.roomId = roomId;
-        this.price = price;
-        this.customer = customer;
-        this.hotel = hotel;
+    public Reservation(int numOfGuests, GregorianCalendar ReservationDate, GregorianCalendar startDate, GregorianCalendar endDate, int roomId, double price, Customer customer, Hotel hotel) {
+    	 this.reservationId = nextResId++;
+         this.numOfGuests = numOfGuests;
+         this.ReservationDate = ReservationDate;
+         this.startDate = startDate;
+         this.endDate = endDate;
+         this.roomId = roomId;
+         this.price = price;
+         this.customer = customer;
+         this.hotel = hotel;
     }
 
     // Getters and Setters
-    public String getInvitationId() {
-        return invitationId;
+    public int getReservationId() {
+        return reservationId;
     }
 
-    public void setInvitationId(String invitationId) {
-        this.invitationId = invitationId;
+    public void setReservationId(int ReservationId) {
+        this.reservationId = ReservationId;
     }
 
     public int getNumOfGuests() {
@@ -50,12 +51,12 @@ public class Invitation {
         }
     }
 
-    public GregorianCalendar getInvitationDate() {
-        return invitationDate;
+    public GregorianCalendar getReservationDate() {
+        return ReservationDate;
     }
 
-    public void setInvitationDate(GregorianCalendar invitationDate) {
-        this.invitationDate = invitationDate;
+    public void setReservationDate(GregorianCalendar ReservationDate) {
+        this.ReservationDate = ReservationDate;
     }
 
     public GregorianCalendar getStartDate() {
@@ -82,11 +83,11 @@ public class Invitation {
         }
     }
 
-    public String getRoomId() {
+    public int getRoomId() {
         return roomId;
     }
 
-    public void setRoomId(String roomId) {
+    public void setRoomId(int roomId) {
         this.roomId = roomId;
     }
 
@@ -117,16 +118,15 @@ public class Invitation {
     // Optional: toString method for easier debugging and logging
     @Override
     public String toString() {
-        return "Invitation{" +
-                "invitationId='" + invitationId + '\'' +
-                ", numOfGuests=" + numOfGuests +
-                ", invitationDate=" + (invitationDate != null ? invitationDate.getTime() : null) +
-                ", startDate=" + (startDate != null ? startDate.getTime() : null) +
-                ", endDate=" + (endDate != null ? endDate.getTime() : null) +
-                ", roomId='" + roomId + '\'' +
+        return "Reservation{" +
+                "numOfGuests=" + numOfGuests +
+                ", reservationDate=" + ReservationDate.getTime() +
+                ", startDate=" + startDate.getTime() +
+                ", endDate=" + endDate.getTime() +
+                ", roomId=" + roomId +
                 ", price=" + price +
-                ", customer=" + customer +
-                ", hotel=" + hotel +
+                ", customerId=" + customer.getId() + // Use customer ID instead of full object
+                ", hotelId=" + hotel.getHotelId() +  // Use hotel ID instead of full object
                 '}';
     }
     
@@ -154,8 +154,8 @@ public class Invitation {
         return "Guests removed successfully. New number of guests: " + numOfGuests;
     }
     
-    // Method to update invitation details
-    public void updateInvitationDetails() {
+    // Method to update Reservation details
+    public void updateReservationDetails() {
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("Which field do you want to update? (numOfGuests/startDate/endDate/roomId/price)");
@@ -194,7 +194,7 @@ public class Invitation {
                 System.out.println("endDate updated successfully.");
                 break;
             case "roomid":
-                String newRoomId = scanner.nextLine();
+                int newRoomId = scanner.nextInt();
                 setRoomId(newRoomId);
                 System.out.println("roomId updated successfully.");
                 break;
@@ -209,11 +209,13 @@ public class Invitation {
         }
     }
     
-    public void sendInvitation(Customer customer) {
+    public void sendReservation(Customer customer) {
         String phoneNumber = customer.getTelephone();
         // Methodically send the message to the customer's phone number
-        System.out.println("Sending invitation to phone number: " + phoneNumber);
+        System.out.println("Sending Reservation to phone number: " + phoneNumber);
         // Simulating sending message
-        System.out.println("Invitation sent successfully to " + phoneNumber);
+        System.out.println("Reservation sent successfully to " + phoneNumber);
 }
+    
+    
 }
