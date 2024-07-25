@@ -123,69 +123,6 @@ public class Hotel {
                 '}';
     }
 
-//    
-// // Method to search for available rooms
-//    public List<Room> searchRoom(List<Hotel> hotels) {
-//        Scanner scanner = new Scanner(System.in);
-//
-//        // Prompt the user to select a hotel by ID
-//        System.out.println("Select a hotel by ID:");
-//        for (Hotel hotel : hotels) {
-//            System.out.println(hotel.getHotelId() + ": " + hotel.getHotelName() + " in " + hotel.getCity());
-//        }
-//        int hotelId = Integer.parseInt(scanner.nextLine());
-//        Hotel selectedHotel = null;
-//        for (Hotel hotel : hotels) {
-//            if (hotel.getHotelId() == hotelId) {
-//                selectedHotel = hotel;
-//                break;
-//            }
-//        }
-//        if (selectedHotel == null) {
-//            System.out.println("Invalid hotel ID. No hotel found.");
-//            return new ArrayList<>();
-//        }
-//
-//        // Prompt the user to enter the search criteria
-//        System.out.println("Enter start date (yyyy-mm-dd):");
-//        String[] startDateInput = scanner.nextLine().split("-");
-//        GregorianCalendar startDate = new GregorianCalendar(
-//                Integer.parseInt(startDateInput[0]),
-//                Integer.parseInt(startDateInput[1]) - 1,
-//                Integer.parseInt(startDateInput[2])
-//        );
-//
-//        System.out.println("Enter end date (yyyy-mm-dd):");
-//        String[] endDateInput = scanner.nextLine().split("-");
-//        GregorianCalendar endDate = new GregorianCalendar(
-//                Integer.parseInt(endDateInput[0]),
-//                Integer.parseInt(endDateInput[1]) - 1,
-//                Integer.parseInt(endDateInput[2])
-//        );
-//
-//        System.out.println("Enter room capacity:");
-//        int roomCapacity = Integer.parseInt(scanner.nextLine());
-//
-//        // Find available rooms in the selected hotel
-//        List<Room> availableRooms = new ArrayList<>();
-//        for (Room room : selectedHotel.getRooms()) {
-//            if (room.getMaxCapacity() >= roomCapacity && selectedHotel.checkAvailableRooms(startDate, endDate).contains(room.getRoomId())) {
-//                availableRooms.add(room);
-//            }
-//        }
-//
-//        if (availableRooms.isEmpty()) {
-//            System.out.println("No available rooms found.");
-//        } else {
-//            System.out.println("Available rooms:");
-//            for (Room room : availableRooms) {
-//                System.out.println(room);
-//            }
-//        }
-//
-//        return availableRooms;
-//    }
-    
     
     // Get room by ID
     public Room getRoomById(int roomId) {
@@ -230,9 +167,6 @@ public class Hotel {
         }
         return room.toString();
     }
-
-   
-
 
     // Method to update room details
     public String updateRoomDetails(int roomId) {
@@ -284,6 +218,16 @@ public class Hotel {
     // Method to add a payment confirmation
     public void addPaymentConfirmation(PaymentConfirmation confirmation) {
     	confirmations.add(confirmation);
+    }
+    
+    public static Hotel searchHotelById(List<Hotel> hotels, int hotelId) {
+        for (Hotel hotel : hotels) {
+            if (hotel.getHotelId() == hotelId) {
+                return hotel;
+            }
+        }
+        System.out.println("Hotel not found\n");
+        return null;
     }
 }
 

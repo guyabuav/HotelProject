@@ -1,4 +1,5 @@
 import java.util.GregorianCalendar;
+import java.util.List;
 
 public class Payment {
     private static int nextPaymentId = 1;
@@ -71,6 +72,7 @@ public class Payment {
     public void setPaymentProcessorCompany(PaymentProcessorCompany paymentProcessorCompany) {
         this.paymentProcessorCompany = paymentProcessorCompany;
     }
+    
 
     // Optional: toString method for easier debugging and logging
     @Override
@@ -84,4 +86,15 @@ public class Payment {
                 ", paymentProcessorCompany=" + paymentProcessorCompany +
                 '}';
     }
+    
+    public static void refundPayment(double amount, Customer customer, List<PaymentProcessorCompany> companies) {
+        // Send refund message to customer
+        System.out.println("Refunding " + amount + " to customer " + customer.getName());
+
+        // Delete the payment from the list of payments in PaymentProcessorCompany
+        for (PaymentProcessorCompany company : companies) {
+            company.getPayments().removeIf(payment -> payment.getCustomer().equals(customer) && payment.getPrice() == amount);
+        }
+    }
+
 }

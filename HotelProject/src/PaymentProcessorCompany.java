@@ -24,6 +24,10 @@ public class PaymentProcessorCompany {
         this.companyName = name;
     }
 
+    
+    public List<Payment> getPayments() {
+        return payments;
+    }
     // Getters and Setters
     public int getCompanyId() {
         return companyId;
@@ -109,6 +113,7 @@ public class PaymentProcessorCompany {
     public String toString() {
         return "PaymentProcessorCompany{" +
                 "companyId='" + companyId + '\'' +
+                "companyName='" + companyName + '\'' +
                 ", telephone='" + telephone + '\'' +
                 ", address='" + address + '\'' +
                 '}';

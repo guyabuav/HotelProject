@@ -1,4 +1,5 @@
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Scanner;
 
 public class Reservation {
@@ -217,5 +218,29 @@ public class Reservation {
         System.out.println("Reservation sent successfully to " + phoneNumber);
 }
     
+    
+    public boolean validateDateChange(GregorianCalendar newStartDate, GregorianCalendar newEndDate, int newRoomId, Hotel hotel) {
+        for (Reservation reservation : hotel.getReservations()) {
+            if (reservation.getReservationId() == this.reservationId) {
+                continue; // Skip the current reservation
+            }
+            if (reservation.getRoomId() == newRoomId &&
+                (newStartDate.before(reservation.getEndDate()) && newEndDate.after(reservation.getStartDate()))) {
+                System.out.println("Error: Room is not available for the new dates.");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static Reservation searchReservationById(List<Reservation> reservations, int reservationId) {
+        for (Reservation reservation : reservations) {
+            if (reservation.getReservationId() == reservationId) {
+                return reservation;
+            }
+        }
+        System.out.println("Reservation not found");
+        return null;
+    }
     
 }
