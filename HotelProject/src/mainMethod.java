@@ -113,7 +113,7 @@ while (true) {
             break;
         case 7:
             // Placeholder for creating a payment
-            System.out.println("Adding guest for existing reservation...");
+            System.out.println("Edit reservation...");
             loggedInCustomer.editReservation(hotels);
             break;
         case 8:

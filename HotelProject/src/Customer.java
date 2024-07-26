@@ -165,69 +165,124 @@ private Hotel selectHotel(List<Hotel> hotels) {
     return null;
 }
 
-// Method to create a reservation
+//Method to create a reservation
 public void createReservation(List<Hotel> hotels, List<PaymentProcessorCompany> companies) {
-    Hotel hotel = selectHotel(hotels);
-    if (hotel == null) {
-        return;
-    }
+ Hotel hotel = selectHotel(hotels);
+ if (hotel == null) {
+     return;
+ }
 
-    Scanner scanner = new Scanner(System.in);
+ Scanner scanner = new Scanner(System.in);
 
-    System.out.println("Enter number of guests:");
-    int numOfGuests = Integer.parseInt(scanner.nextLine());
+ int numOfGuests;
+ do {
+     System.out.println("Enter number of guests:");
+     numOfGuests = Integer.parseInt(scanner.nextLine());
+     if (numOfGuests <= 0) {
+         System.out.println("Error: Number of guests must be greater than 0.");
+     }
+ } while (numOfGuests <= 0);
 
-    System.out.println("Enter start date (yyyy-mm-dd):");
-    String[] startDateInput = scanner.nextLine().split("-");
-    GregorianCalendar startDate = new GregorianCalendar(
-            Integer.parseInt(startDateInput[0]),
-            Integer.parseInt(startDateInput[1]) - 1,
-            Integer.parseInt(startDateInput[2])
-    );
+ GregorianCalendar startDate;
+ GregorianCalendar endDate;
+ GregorianCalendar today = new GregorianCalendar();
+ today.set(GregorianCalendar.HOUR_OF_DAY, 0);
+ today.set(GregorianCalendar.MINUTE, 0);
+ today.set(GregorianCalendar.SECOND, 0);
+ today.set(GregorianCalendar.MILLISECOND, 0);
 
-    System.out.println("Enter end date (yyyy-mm-dd):");
-    String[] endDateInput = scanner.nextLine().split("-");
-    GregorianCalendar endDate = new GregorianCalendar(
-            Integer.parseInt(endDateInput[0]),
-            Integer.parseInt(endDateInput[1]) - 1,
-            Integer.parseInt(endDateInput[2])
-    );
+ while (true) {
+     System.out.println("Enter start date (yyyy-mm-dd):");
+     String[] startDateInput = scanner.nextLine().split("-");
+     if (!isValidDate(startDateInput)) {
+         System.out.println("Error: Invalid date format or range. Please enter a valid date in yyyy-mm-dd format.");
+         continue;
+     }
+     startDate = new GregorianCalendar(
+             Integer.parseInt(startDateInput[0]),
+             Integer.parseInt(startDateInput[1]) - 1,
+             Integer.parseInt(startDateInput[2])
+     );
 
-    System.out.println("Enter room ID:");
-    int roomId = Integer.parseInt(scanner.nextLine());
+     System.out.println("Enter end date (yyyy-mm-dd):");
+     String[] endDateInput = scanner.nextLine().split("-");
+     if (!isValidDate(endDateInput)) {
+         System.out.println("Error: Invalid date format or range. Please enter a valid date in yyyy-mm-dd format.");
+         continue;
+     }
+     endDate = new GregorianCalendar(
+             Integer.parseInt(endDateInput[0]),
+             Integer.parseInt(endDateInput[1]) - 1,
+             Integer.parseInt(endDateInput[2])
+     );
 
-    GregorianCalendar reservationDate = new GregorianCalendar(); // Today's date
+     if (startDate.after(endDate)) {
+         System.out.println("Error: Start date must be before end date.");
+     } else if (startDate.before(today) || endDate.before(today)) {
+         System.out.println("Error: Dates cannot be in the past.");
+     } else {
+         break; // Dates are valid, exit the loop
+     }
+ }
 
-    // Check if the room is available
-    if (!hotel.checkAvailableRooms(startDate, endDate).contains(roomId)) {
-        System.out.println("Error: Room is not available.");
-        return;
-    }
+ System.out.println("Enter room ID:");
+ int roomId = Integer.parseInt(scanner.nextLine());
 
-    // Check if the number of guests is within the room's capacity
-    Room room = hotel.getRoomById(roomId);
-    if (room == null || !room.capacityCheck(numOfGuests)) {
-        System.out.println("Error: Room capacity exceeded or room not found.");
-        return;
-    }
+ GregorianCalendar reservationDate = new GregorianCalendar(); // Today's date
 
-    // Calculate the price based on the room's price per night
-    long diffInMillies = endDate.getTimeInMillis() - startDate.getTimeInMillis();
-    long days = (diffInMillies / (1000 * 60 * 60 * 24)) + 1; // +1 to include the end date
-    double price = days * room.getPricePerNight();
+ // Check if the room is available
+ if (!hotel.checkAvailableRooms(startDate, endDate).contains(roomId)) {
+     System.out.println("Error: Room is not available.");
+     return;
+ }
 
-    // Print the calculated price to the user
-    System.out.println("The total price for the reservation is: " + price);
+ // Check if the number of guests is within the room's capacity
+ Room room = hotel.getRoomById(roomId);
+ if (room == null || !room.capacityCheck(numOfGuests)) {
+     System.out.println("Error: Room capacity exceeded or room not found.");
+     return;
+ }
 
-    // Create and save the reservation
-    Reservation reservation = new Reservation(
-            numOfGuests, reservationDate, startDate, endDate, roomId, price, this, hotel
-    );
+ // Calculate the price based on the room's price per night
+ long diffInMillies = endDate.getTimeInMillis() - startDate.getTimeInMillis();
+ long days = (diffInMillies / (1000 * 60 * 60 * 24)) + 1; // +1 to include the end date
+ double price = days * room.getPricePerNight();
 
-    hotel.addReservation(reservation);
-    System.out.println("Reservation created successfully.");
-    this.createPayment(price, companies);
+ // Print the calculated price to the user
+ System.out.println("The total price for the reservation is: " + price);
+
+ // Create and save the reservation
+ Reservation reservation = new Reservation(
+         numOfGuests, reservationDate, startDate, endDate, roomId, price, this, hotel
+ );
+
+ hotel.addReservation(reservation);
+ System.out.println("Reservation created successfully.");
+ this.createPayment(price, companies);
 }
+
+//Helper method to validate date format and ranges
+private boolean isValidDate(String[] dateInput) {
+ if (dateInput.length != 3) return false;
+ try {
+     int year = Integer.parseInt(dateInput[0]);
+     int month = Integer.parseInt(dateInput[1]);
+     int day = Integer.parseInt(dateInput[2]);
+     GregorianCalendar today = new GregorianCalendar();
+     int currentYear = today.get(GregorianCalendar.YEAR);
+     
+     if (year < currentYear) return false;
+     if (month < 1 || month > 12) return false;
+     if (day < 1 || day > 31) return false;
+     
+     return true;
+ } catch (NumberFormatException e) {
+     return false;
+ }
+}
+
+
+
 
 public void viewPastReservations(List<Hotel> hotels) {
     System.out.println("Entering viewPastReservations");
@@ -259,50 +314,50 @@ public Payment createPayment(double price, List<PaymentProcessorCompany> compani
     String paymentMethod = "";
     PaymentProcessorCompany paymentProcessorCompany = null;
     GregorianCalendar reservationDate = new GregorianCalendar();
-    // Menu for payment method
-    boolean a = true;
-    while(a) {
-    System.out.println("Select payment method:");
-    System.out.println("1. Cash");
-    System.out.println("2. Credit Card");
-    int paymentMethodChoice = Integer.parseInt(scanner.nextLine());
     
-    switch (paymentMethodChoice) {
-        case 1:
-            paymentMethod = "cash";
-            a = false;
-            break;
-        case 2:
-            paymentMethod = "credit-card";
-            a = false;
-            break;
-        default:
-            System.out.println("Invalid choice, please try again.");
-    }
-    }
-
-    // Menu for payment processor company
-    boolean b = true;
-    while(b) {
-    if (paymentMethod.equals("credit-card")) {
-        System.out.println("Choose payment processor company:");
-        for (PaymentProcessorCompany company : companies) {
-            System.out.println(company.getCompanyId() + ". " + company.getName());
-        }
-        int paymentProcessorChoice = Integer.parseInt(scanner.nextLine());
-
-        paymentProcessorCompany = companies.stream()
-                .filter(c -> c.getCompanyId() == paymentProcessorChoice)
-                .findFirst()
-                .orElse(null);
-
-        if (paymentProcessorCompany == null) {
-            System.out.println("Invalid choice, please try again.");
-        }
+    // Menu for payment method
+    boolean validPaymentMethod = false;
+    while (!validPaymentMethod) {
+        System.out.println("Select payment method:");
+        System.out.println("1. Cash");
+        System.out.println("2. Credit Card");
+        int paymentMethodChoice = Integer.parseInt(scanner.nextLine());
         
-        if(paymentProcessorCompany != null)
-        	b = false;
+        switch (paymentMethodChoice) {
+            case 1:
+                paymentMethod = "cash";
+                validPaymentMethod = true;
+                break;
+            case 2:
+                paymentMethod = "credit-card";
+                validPaymentMethod = true;
+                break;
+            default:
+                System.out.println("Invalid choice, please try again.");
+        }
     }
+
+    // Menu for payment processor company if credit-card is chosen
+    if (paymentMethod.equals("credit-card")) {
+        boolean validProcessor = false;
+        while (!validProcessor) {
+            System.out.println("Choose payment processor company:");
+            for (PaymentProcessorCompany company : companies) {
+                System.out.println(company.getCompanyId() + ". " + company.getName());
+            }
+            int paymentProcessorChoice = Integer.parseInt(scanner.nextLine());
+
+            paymentProcessorCompany = companies.stream()
+                    .filter(c -> c.getCompanyId() == paymentProcessorChoice)
+                    .findFirst()
+                    .orElse(null);
+
+            if (paymentProcessorCompany == null) {
+                System.out.println("Invalid choice, please try again.");
+            } else {
+                validProcessor = true;
+            }
+        }
     }
     
     Payment payment = new Payment(paymentMethod, reservationDate, price, this, paymentProcessorCompany);
@@ -311,6 +366,8 @@ public Payment createPayment(double price, List<PaymentProcessorCompany> compani
 
     return payment;
 }
+
+
 
 public static Customer authenticate(List<Customer> customers, String username, String password) {
     for (Customer customer : customers) {
@@ -323,321 +380,411 @@ public static Customer authenticate(List<Customer> customers, String username, S
 
 public void sendPayment(Payment payment) {
     PaymentProcessorCompany company = payment.getPaymentProcessorCompany();
-    if (company != null) {
+    if (company != null ) {
     company.payments.add(payment);
     System.out.println("Payment sent successfully to the payment processor company.");
     }
-    else {
+    if (company == null && payment.getPaymentMethod().equals("cash")) {
+        System.out.println("Payment method cash sent to the hotel");
+    }
+    if (company == null && payment.getPaymentMethod() != "cash") {
     System.out.println("No payment processor company selected. Cannot send payment.");
     }
     
 }
 
 
-// Method to search for available rooms
-   public List<Room> searchRoom(List<Hotel> hotels) {
-       Scanner scanner = new Scanner(System.in);
+//Method to search for available rooms
+public List<Room> searchRoom(List<Hotel> hotels) {
+ Scanner scanner = new Scanner(System.in);
 
-       // Prompt the user to select a hotel by ID
-       System.out.println("Select a hotel by ID:");
-       for (Hotel hotel : hotels) {
-           System.out.println(hotel.getHotelId() + ": " + hotel.getHotelName() + " in " + hotel.getCity());
-       }
-       int hotelId = Integer.parseInt(scanner.nextLine());
-       Hotel selectedHotel = null;
-       for (Hotel hotel : hotels) {
-           if (hotel.getHotelId() == hotelId) {
-               selectedHotel = hotel;
-               break;
-           }
-       }
-       if (selectedHotel == null) {
-           System.out.println("Invalid hotel ID. No hotel found.");
-           return new ArrayList<>();
-       }
+ // Prompt the user to select a hotel by ID
+ System.out.println("Select a hotel by ID:");
+ for (Hotel hotel : hotels) {
+     System.out.println(hotel.getHotelId() + ": " + hotel.getHotelName() + " in " + hotel.getCity());
+ }
+ int hotelId = Integer.parseInt(scanner.nextLine());
+ Hotel selectedHotel = Hotel.searchHotelById(hotels, hotelId);
+ if (selectedHotel == null) {
+     System.out.println("Invalid hotel ID. No hotel found.");
+     return new ArrayList<>();
+ }
 
-       // Prompt the user to enter the search criteria
-       System.out.println("Enter start date (yyyy-mm-dd):");
-       String[] startDateInput = scanner.nextLine().split("-");
-       GregorianCalendar startDate = new GregorianCalendar(
-               Integer.parseInt(startDateInput[0]),
-               Integer.parseInt(startDateInput[1]) - 1,
-               Integer.parseInt(startDateInput[2])
-       );
+ GregorianCalendar startDate;
+ GregorianCalendar endDate;
+ GregorianCalendar today = new GregorianCalendar();
+ today.set(GregorianCalendar.HOUR_OF_DAY, 0);
+ today.set(GregorianCalendar.MINUTE, 0);
+ today.set(GregorianCalendar.SECOND, 0);
+ today.set(GregorianCalendar.MILLISECOND, 0);
 
-       System.out.println("Enter end date (yyyy-mm-dd):");
-       String[] endDateInput = scanner.nextLine().split("-");
-       GregorianCalendar endDate = new GregorianCalendar(
-               Integer.parseInt(endDateInput[0]),
-               Integer.parseInt(endDateInput[1]) - 1,
-               Integer.parseInt(endDateInput[2])
-       );
+ while (true) {
+     System.out.println("Enter start date (yyyy-mm-dd):");
+     String[] startDateInput = scanner.nextLine().split("-");
+     if (!isValidDate(startDateInput)) {
+         System.out.println("Error: Invalid date format or range. Please enter a valid date in yyyy-mm-dd format.");
+         continue;
+     }
+     startDate = new GregorianCalendar(
+             Integer.parseInt(startDateInput[0]),
+             Integer.parseInt(startDateInput[1]) - 1,
+             Integer.parseInt(startDateInput[2])
+     );
 
-       System.out.println("Enter room capacity:");
-       int roomCapacity = Integer.parseInt(scanner.nextLine());
+     System.out.println("Enter end date (yyyy-mm-dd):");
+     String[] endDateInput = scanner.nextLine().split("-");
+     if (!isValidDate(endDateInput)) {
+         System.out.println("Error: Invalid date format or range. Please enter a valid date in yyyy-mm-dd format.");
+         continue;
+     }
+     endDate = new GregorianCalendar(
+             Integer.parseInt(endDateInput[0]),
+             Integer.parseInt(endDateInput[1]) - 1,
+             Integer.parseInt(endDateInput[2])
+     );
 
-       // Find available rooms in the selected hotel
-       List<Room> availableRooms = new ArrayList<>();
-       for (Room room : selectedHotel.getRooms()) {
-           if (room.getMaxCapacity() >= roomCapacity && selectedHotel.checkAvailableRooms(startDate, endDate).contains(room.getRoomId())) {
-               availableRooms.add(room);
-           }
-       }
+     if (startDate.after(endDate)) {
+         System.out.println("Error: Start date must be before end date.");
+     } else if (startDate.before(today) || endDate.before(today)) {
+         System.out.println("Error: Dates cannot be in the past.");
+     } else {
+         break; // Dates are valid, exit the loop
+     }
+ }
 
-       if (availableRooms.isEmpty()) {
-           System.out.println("No available rooms found.");
-       } else {
-           System.out.println("Available rooms:");
-           for (Room room : availableRooms) {
-               System.out.println(room);
-           }
-       }
+ int roomCapacity;
+ do {
+     System.out.println("Enter room capacity:");
+     roomCapacity = Integer.parseInt(scanner.nextLine());
+     if (roomCapacity <= 0) {
+         System.out.println("Error: Room capacity must be greater than 0.");
+     }
+ } while (roomCapacity <= 0);
 
-       return availableRooms;
-   }
-   
-   
-   // Method to add a room to a selected hotel by prompting the user for arguments
-   public void addRoom(List<Hotel> hotels) {
-       Scanner scanner = new Scanner(System.in);
+ // Find available rooms in the selected hotel
+ List<Room> availableRooms = new ArrayList<>();
+ for (Room room : selectedHotel.getRooms()) {
+     if (room.getMaxCapacity() >= roomCapacity && selectedHotel.checkAvailableRooms(startDate, endDate).contains(room.getRoomId())) {
+         availableRooms.add(room);
+     }
+ }
 
-       // Prompt the user to select a hotel by ID
-       System.out.println("Select a hotel by ID to add a room:");
-       for (Hotel hotel : hotels) {
-           System.out.println(hotel.getHotelId() + ": " + hotel.getHotelName() + " in " + hotel.getCity());
-       }
-       int hotelId = Integer.parseInt(scanner.nextLine());
-       Hotel selectedHotel = null;
-       for (Hotel hotel : hotels) {
-           if (hotel.getHotelId() == hotelId) {
-               selectedHotel = hotel;
-               break;
-           }
-       }
-       if (selectedHotel == null) {
-           System.out.println("Invalid hotel ID. No hotel found.");
-           return;
-       }
+ if (availableRooms.isEmpty()) {
+     System.out.println("No available rooms found.");
+ } else {
+     System.out.println("Available rooms:");
+     for (Room room : availableRooms) {
+         System.out.println(room);
+     }
+ }
 
-       System.out.println("Enter maximum capacity for the room:");
-       int maxCapacity = Integer.parseInt(scanner.nextLine());
+ return availableRooms;
+}       
 
-       System.out.println("Enter price per night for the room:");
-       double pricePerNight = Double.parseDouble(scanner.nextLine());
+//Method to add a room to a selected hotel by prompting the user for arguments
+public void addRoom(List<Hotel> hotels) {
+ Scanner scanner = new Scanner(System.in);
 
-       Room room = new Room(maxCapacity, pricePerNight);
-       selectedHotel.addRoom(room);
-       System.out.println("Room added successfully: " + room.toString());
-       }
-       
+ // Prompt the user to select a hotel by ID
+ System.out.println("Select a hotel by ID to add a room:");
+ for (Hotel hotel : hotels) {
+     System.out.println(hotel.getHotelId() + ": " + hotel.getHotelName() + " in " + hotel.getCity());
+ }
+ int hotelId = Integer.parseInt(scanner.nextLine());
+ Hotel selectedHotel = null;
+ for (Hotel hotel : hotels) {
+     if (hotel.getHotelId() == hotelId) {
+         selectedHotel = hotel;
+         break;
+     }
+ }
+ if (selectedHotel == null) {
+     System.out.println("Invalid hotel ID. No hotel found.");
+     return;
+ }
+
+ int maxCapacity;
+ do {
+     System.out.println("Enter maximum capacity for the room:");
+     maxCapacity = Integer.parseInt(scanner.nextLine());
+     if (maxCapacity <= 0) {
+         System.out.println("Error: Maximum capacity must be greater than 0.");
+     }
+ } while (maxCapacity <= 0);
+
+ double pricePerNight;
+ do {
+     System.out.println("Enter price per night for the room:");
+     pricePerNight = Double.parseDouble(scanner.nextLine());
+     if (pricePerNight <= 0) {
+         System.out.println("Error: Price per night must be greater than 0.");
+     }
+ } while (pricePerNight <= 0);
+
+ Room room = new Room(maxCapacity, pricePerNight);
+ selectedHotel.addRoom(room);
+ System.out.println("Room added successfully: " + room.toString());
+}
+
+//Method to update room details by prompting the user for inputs
+public void updateRoomDetails(List<Hotel> hotels) {
+ Scanner scanner = new Scanner(System.in);
+
+ // Prompt the user to select a hotel by ID
+ System.out.println("Select a hotel by ID to update room details:");
+ for (Hotel hotel : hotels) {
+     System.out.println(hotel.getHotelId() + ": " + hotel.getHotelName() + " in " + hotel.getCity());
+ }
+ int hotelId = Integer.parseInt(scanner.nextLine());
+ Hotel selectedHotel = null;
+ for (Hotel hotel : hotels) {
+     if (hotel.getHotelId() == hotelId) {
+         selectedHotel = hotel;
+         break;
+     }
+ }
+ if (selectedHotel == null) {
+     System.out.println("Invalid hotel ID. No hotel found.");
+     return;
+ }
+
+ System.out.println("Enter the room ID to update:");
+ int roomId = Integer.parseInt(scanner.nextLine());
+ Room room = selectedHotel.getRoomById(roomId);
+ if (room == null) {
+     System.out.println("Error: Room not found.");
+     return;
+ }
+
+ System.out.println("Which field do you want to update?");
+ System.out.println("1. Max Capacity");
+ System.out.println("2. Price Per Night");
+ int fieldChoice = Integer.parseInt(scanner.nextLine());
+
+ switch (fieldChoice) {
+     case 1:
+         int newMaxCapacity;
+         do {
+             System.out.println("Enter the new value for Max Capacity:");
+             newMaxCapacity = Integer.parseInt(scanner.nextLine());
+             if (newMaxCapacity <= 0) {
+                 System.out.println("Error: Max capacity must be greater than 0.");
+             }
+         } while (newMaxCapacity <= 0);
+         room.setMaxCapacity(newMaxCapacity);
+         break;
+     case 2:
+         double newPricePerNight;
+         do {
+             System.out.println("Enter the new value for Price Per Night:");
+             newPricePerNight = Double.parseDouble(scanner.nextLine());
+             if (newPricePerNight <= 0) {
+                 System.out.println("Error: Price per night must be greater than 0.");
+             }
+         } while (newPricePerNight <= 0);
+         room.setPricePerNight(newPricePerNight);
+         break;
+     default:
+         System.out.println("Error: Invalid choice.");
+         return;
+ }
+ System.out.println("Room details updated successfully: " + room.toString());
+}
+
+
+
   
-       
-       // Method to update room details by prompting the user for inputs
-   public void updateRoomDetails(List<Hotel> hotels) {
-       Scanner scanner = new Scanner(System.in);
+          
+public void addGuest(Hotel hotel, Reservation reservation) {
+    Scanner scanner = new Scanner(System.in);
+    int additionalGuests;
+    do {
+        System.out.println("Enter number of additional guests:");
+        additionalGuests = Integer.parseInt(scanner.nextLine());
+        if (additionalGuests <= 0) {
+            System.out.println("Error: Number of additional guests must be greater than 0.");
+        }
+    } while (additionalGuests <= 0);
 
-       // Prompt the user to select a hotel by ID
-       System.out.println("Select a hotel by ID to update room details:");
-       for (Hotel hotel : hotels) {
-           System.out.println(hotel.getHotelId() + ": " + hotel.getHotelName() + " in " + hotel.getCity());
-       }
-       int hotelId = Integer.parseInt(scanner.nextLine());
-       Hotel selectedHotel = null;
-       for (Hotel hotel : hotels) {
-           if (hotel.getHotelId() == hotelId) {
-               selectedHotel = hotel;
-               break;
-           }
-       }
-       if (selectedHotel == null) {
-           System.out.println("Invalid hotel ID. No hotel found.");
-           return;
-       }
+    int newGuestCount = reservation.getNumOfGuests() + additionalGuests;
 
-       System.out.println("Enter the room ID to update:");
-       int roomId = Integer.parseInt(scanner.nextLine());
-       Room room = selectedHotel.getRoomById(roomId);
-       if (room == null) {
-           System.out.println("Error: Room not found.");
-           return;
-       }
+    Room room = hotel.getRoomById(reservation.getRoomId());
+    if (newGuestCount > room.getMaxCapacity()) {
+        System.out.println("Error: Number of guests exceeds room capacity.");
+        return;
+    }
 
-       System.out.println("Which field do you want to update?");
-       System.out.println("1. Max Capacity");
-       System.out.println("2. Price Per Night");
-       int fieldChoice = Integer.parseInt(scanner.nextLine());
+    reservation.setNumOfGuests(newGuestCount);
+    System.out.println("Guests added successfully. New number of guests: " + newGuestCount);
+}
 
-       switch (fieldChoice) {
-           case 1:
-               System.out.println("Enter the new value for Max Capacity:");
-               int newMaxCapacity = Integer.parseInt(scanner.nextLine());
-               room.setMaxCapacity(newMaxCapacity);
-               break;
-           case 2:
-               System.out.println("Enter the new value for Price Per Night:");
-               double newPricePerNight = Double.parseDouble(scanner.nextLine());
-               room.setPricePerNight(newPricePerNight);
-               break;
-           default:
-               System.out.println("Error: Invalid choice.");
-               return;
-       }
-       System.out.println("Room details updated successfully: " + room.toString());
-   }
-   
-   public void addGuest(Hotel hotel, Reservation reservation) {
-       Scanner scanner = new Scanner(System.in);
-       System.out.println("Enter number of additional guests:");
-       int additionalGuests = Integer.parseInt(scanner.nextLine());
-       int newGuestCount = reservation.getNumOfGuests() + additionalGuests;
+public void removeGuest(Hotel hotel, Reservation reservation) {
+    Scanner scanner = new Scanner(System.in);
+    int guestsToRemove;
+    do {
+        System.out.println("Enter number of guests to remove:");
+        guestsToRemove = Integer.parseInt(scanner.nextLine());
+        if (guestsToRemove <= 0) {
+            System.out.println("Error: Number of guests to remove must be greater than 0.");
+        }
+    } while (guestsToRemove <= 0);
 
-       Room room = hotel.getRoomById(reservation.getRoomId());
-       if (newGuestCount <= 0) {
-           System.out.println("Error: Number of guests cannot be less than or equal to 0.");
-           return;
-       }
-       if (newGuestCount > room.getMaxCapacity()) {
-           System.out.println("Error: Number of guests exceeds room capacity.");
-           return;
-       }
+    int newGuestCount = reservation.getNumOfGuests() - guestsToRemove;
 
-       reservation.setNumOfGuests(newGuestCount);
-       System.out.println("Guests added successfully. New number of guests: " + newGuestCount);
-   }
+    if (newGuestCount < 1) {
+        System.out.println("Error: Number of guests cannot be less than 1.");
+        return;
+    }
 
-   public void removeGuest(Hotel hotel, Reservation reservation) {
-       Scanner scanner = new Scanner(System.in);
-       System.out.println("Enter number of guests to remove:");
-       int guestsToRemove = Integer.parseInt(scanner.nextLine());
-       int newGuestCount = reservation.getNumOfGuests() - guestsToRemove;
+    reservation.setNumOfGuests(newGuestCount);
+    System.out.println("Guests removed successfully. New number of guests: " + newGuestCount);
+}
 
-       if (newGuestCount <= 0) {
-           System.out.println("Error: Number of guests cannot be less than or equal to 0.");
-           return;
-       }
-       if (newGuestCount < 1) {
-           System.out.println("Error: Number of guests cannot be less than 1.");
-           return;
-       }
+public void editReservation(List<Hotel> hotels) {
+    Scanner scanner = new Scanner(System.in);
 
-       reservation.setNumOfGuests(newGuestCount);
-       System.out.println("Guests removed successfully. New number of guests: " + newGuestCount);
-   }
-   
-   
-   
-   public void editReservation(List<Hotel> hotels) {
-       Scanner scanner = new Scanner(System.in);
+    // Prompt the user to select a hotel by ID
+    System.out.println("Select a hotel by ID:");
+    for (Hotel hotel : hotels) {
+        System.out.println(hotel.getHotelId() + ": " + hotel.getHotelName() + " in " + hotel.getCity());
+    }
+    int hotelId = Integer.parseInt(scanner.nextLine());
+    Hotel selectedHotel = Hotel.searchHotelById(hotels, hotelId);
+    if (selectedHotel == null) {
+        System.out.println("Invalid hotel ID. No hotel found.");
+        return;
+    }
 
-       // Prompt the user to select a hotel by ID
-       System.out.println("Select a hotel by ID:");
-       for (Hotel hotel : hotels) {
-           System.out.println(hotel.getHotelId() + ": " + hotel.getHotelName() + " in " + hotel.getCity());
-       }
-       int hotelId = Integer.parseInt(scanner.nextLine());
-       Hotel selectedHotel = Hotel.searchHotelById(hotels, hotelId);
-       if (selectedHotel == null) {
-           System.out.println("Invalid hotel ID. No hotel found.");
-           return;
-       }
+    // Prompt the user to select a reservation by ID
+    System.out.println("Select a reservation by ID:");
+    for (Reservation reservation : selectedHotel.getReservations()) {
+        System.out.println(reservation.getReservationId() + ": Reservation for " + reservation.getNumOfGuests() + " guests from " + reservation.getStartDate().getTime() + " to " + reservation.getEndDate().getTime());
+    }
+    int reservationId = Integer.parseInt(scanner.nextLine());
+    Reservation selectedReservation = Reservation.searchReservationById(selectedHotel.getReservations(), reservationId);
+    if (selectedReservation == null) {
+        System.out.println("Invalid reservation ID. No reservation found.");
+        return;
+    }
 
-       // Prompt the user to select a reservation by ID
-       System.out.println("Select a reservation by ID:");
-       for (Reservation reservation : selectedHotel.getReservations()) {
-           System.out.println(reservation.getReservationId() + ": Reservation for " + reservation.getNumOfGuests() + " guests from " + reservation.getStartDate().getTime() + " to " + reservation.getEndDate().getTime());
-       }
-       int reservationId = Integer.parseInt(scanner.nextLine());
-       Reservation selectedReservation = Reservation.searchReservationById(selectedHotel.getReservations(), reservationId);
-       if (selectedReservation == null) {
-           System.out.println("Invalid reservation ID. No reservation found.");
-           return;
-       }
+    // Prompt the user to select the field to edit
+    System.out.println("Which field do you want to edit?");
+    System.out.println("1. Number of Guests");
+    System.out.println("2. Start Date");
+    System.out.println("3. End Date");
+    System.out.println("4. Room ID");
+    System.out.println("5. Hotel ID (Cannot be changed)");
+    System.out.println("6. Price (Cannot be changed)");
+    int fieldChoice = Integer.parseInt(scanner.nextLine());
 
-       // Prompt the user to select the field to edit
-       System.out.println("Which field do you want to edit?");
-       System.out.println("1. Number of Guests");
-       System.out.println("2. Start Date");
-       System.out.println("3. End Date");
-       System.out.println("4. Room ID");
-       System.out.println("5. Hotel ID (Cannot be changed)");
-       System.out.println("6. Price (Cannot be changed)");
-       int fieldChoice = Integer.parseInt(scanner.nextLine());
+    GregorianCalendar today = new GregorianCalendar();
+    today.set(GregorianCalendar.HOUR_OF_DAY, 0);
+    today.set(GregorianCalendar.MINUTE, 0);
+    today.set(GregorianCalendar.SECOND, 0);
+    today.set(GregorianCalendar.MILLISECOND, 0);
 
-       switch (fieldChoice) {
-           case 1:
-               System.out.println("Do you want to add or remove guests? (add/remove)");
-               String action = scanner.nextLine().toLowerCase();
-               if (action.equals("add")) {
-                   addGuest(selectedHotel, selectedReservation);
-               } else if (action.equals("remove")) {
-                   removeGuest(selectedHotel, selectedReservation);
-               } else {
-                   System.out.println("Invalid action.");
-               }
-               break;
-           case 2:
-               System.out.println("Enter new start date (yyyy-mm-dd):");
-               String[] startDateInput = scanner.nextLine().split("-");
-               GregorianCalendar newStartDate = new GregorianCalendar(
-                       Integer.parseInt(startDateInput[0]),
-                       Integer.parseInt(startDateInput[1]) - 1,
-                       Integer.parseInt(startDateInput[2])
-               );
-               if (newStartDate.after(selectedReservation.getEndDate())) {
-                   System.out.println("Error: Start date must be before end date.");
-               } else if (selectedReservation.validateDateChange(newStartDate, selectedReservation.getEndDate(), selectedReservation.getRoomId(), selectedHotel)) {
-                   long oldDays = (selectedReservation.getEndDate().getTimeInMillis() - selectedReservation.getStartDate().getTimeInMillis()) / (1000 * 60 * 60 * 24) + 1;
-                   long newDays = (selectedReservation.getEndDate().getTimeInMillis() - newStartDate.getTimeInMillis()) / (1000 * 60 * 60 * 24) + 1;
-                   double priceDifference = (newDays - oldDays) * selectedHotel.getRoomById(selectedReservation.getRoomId()).getPricePerNight();
-                   selectedReservation.setStartDate(newStartDate);
-                   selectedReservation.setPrice(selectedReservation.getPrice() + priceDifference);
-                   System.out.println("Start date and price updated successfully.");
-               }
-               break;
-           case 3:
-               System.out.println("Enter new end date (yyyy-mm-dd):");
-               String[] endDateInput = scanner.nextLine().split("-");
-               GregorianCalendar newEndDate = new GregorianCalendar(
-                       Integer.parseInt(endDateInput[0]),
-                       Integer.parseInt(endDateInput[1]) - 1,
-                       Integer.parseInt(endDateInput[2])
-               );
-               if (newEndDate.before(selectedReservation.getStartDate())) {
-                   System.out.println("Error: End date must be after start date.");
-               } else if (selectedReservation.validateDateChange(selectedReservation.getStartDate(), newEndDate, selectedReservation.getRoomId(), selectedHotel)) {
-                   long oldDays = (selectedReservation.getEndDate().getTimeInMillis() - selectedReservation.getStartDate().getTimeInMillis()) / (1000 * 60 * 60 * 24) + 1;
-                   long newDays = (newEndDate.getTimeInMillis() - selectedReservation.getStartDate().getTimeInMillis()) / (1000 * 60 * 60 * 24) + 1;
-                   double priceDifference = (newDays - oldDays) * selectedHotel.getRoomById(selectedReservation.getRoomId()).getPricePerNight();
-                   selectedReservation.setEndDate(newEndDate);
-                   selectedReservation.setPrice(selectedReservation.getPrice() + priceDifference);
-                   System.out.println("End date and price updated successfully.");
-               }
-               break;
-           case 4:
-               System.out.println("Enter new room ID:");
-               int newRoomId = Integer.parseInt(scanner.nextLine());
-               if (selectedReservation.validateDateChange(selectedReservation.getStartDate(), selectedReservation.getEndDate(), newRoomId, selectedHotel)) {
-                   Room newRoom = selectedHotel.getRoomById(newRoomId);
-                   double oldRoomPrice = selectedHotel.getRoomById(selectedReservation.getRoomId()).getPricePerNight();
-                   double newRoomPrice = newRoom.getPricePerNight();
-                   long days = (selectedReservation.getEndDate().getTimeInMillis() - selectedReservation.getStartDate().getTimeInMillis()) / (1000 * 60 * 60 * 24) + 1;
-                   double priceDifference = (newRoomPrice - oldRoomPrice) * days;
-                   selectedReservation.setPrice(selectedReservation.getPrice() + priceDifference);
-                   selectedReservation.setRoomId(newRoomId);
-                   System.out.println("Room ID and price updated successfully.");
-               }
-               break;
-           case 5:
-               System.out.println("Error: You must cancel the reservation and make a new one to change the hotel.");
-               break;
-           case 6:
-               System.out.println("Error: Price cannot be changed.");
-               break;
-           default:
-               System.out.println("Invalid choice.");
-               break;
-       }
-   }
+    switch (fieldChoice) {
+        case 1:
+            System.out.println("Do you want to add or remove guests? (add/remove)");
+            String action = scanner.nextLine().toLowerCase();
+            if (action.equals("add")) {
+                addGuest(selectedHotel, selectedReservation);
+            } else if (action.equals("remove")) {
+                removeGuest(selectedHotel, selectedReservation);
+            } else {
+                System.out.println("Invalid action.");
+            }
+            break;
+        case 2:
+            while (true) {
+                System.out.println("Enter new start date (yyyy-mm-dd):");
+                String[] startDateInput = scanner.nextLine().split("-");
+                if (!isValidDate(startDateInput)) {
+                    System.out.println("Error: Invalid date format or range. Please enter a valid date in yyyy-mm-dd format.");
+                    continue;
+                }
+                GregorianCalendar newStartDate = new GregorianCalendar(
+                        Integer.parseInt(startDateInput[0]),
+                        Integer.parseInt(startDateInput[1]) - 1,
+                        Integer.parseInt(startDateInput[2])
+                );
+
+                if (newStartDate.after(selectedReservation.getEndDate())) {
+                    System.out.println("Error: Start date must be before end date.");
+                } else if (newStartDate.before(today)) {
+                    System.out.println("Error: Start date cannot be in the past.");
+                } else if (selectedReservation.validateDateChange(newStartDate, selectedReservation.getEndDate(), selectedReservation.getRoomId(), selectedHotel)) {
+                    long oldDays = (selectedReservation.getEndDate().getTimeInMillis() - selectedReservation.getStartDate().getTimeInMillis()) / (1000 * 60 * 60 * 24) + 1;
+                    long newDays = (selectedReservation.getEndDate().getTimeInMillis() - newStartDate.getTimeInMillis()) / (1000 * 60 * 60 * 24) + 1;
+                    double priceDifference = (newDays - oldDays) * selectedHotel.getRoomById(selectedReservation.getRoomId()).getPricePerNight();
+                    selectedReservation.setStartDate(newStartDate);
+                    selectedReservation.setPrice(selectedReservation.getPrice() + priceDifference);
+                    System.out.println("Start date and price updated successfully.");
+                    break;
+                }
+            }
+            break;
+        case 3:
+            while (true) {
+                System.out.println("Enter new end date (yyyy-mm-dd):");
+                String[] endDateInput = scanner.nextLine().split("-");
+                if (!isValidDate(endDateInput)) {
+                    System.out.println("Error: Invalid date format or range. Please enter a valid date in yyyy-mm-dd format.");
+                    continue;
+                }
+                GregorianCalendar newEndDate = new GregorianCalendar(
+                        Integer.parseInt(endDateInput[0]),
+                        Integer.parseInt(endDateInput[1]) - 1,
+                        Integer.parseInt(endDateInput[2])
+                );
+
+                if (newEndDate.before(selectedReservation.getStartDate())) {
+                    System.out.println("Error: End date must be after start date.");
+                } else if (newEndDate.before(today)) {
+                    System.out.println("Error: End date cannot be in the past.");
+                } else if (selectedReservation.validateDateChange(selectedReservation.getStartDate(), newEndDate, selectedReservation.getRoomId(), selectedHotel)) {
+                    long oldDays = (selectedReservation.getEndDate().getTimeInMillis() - selectedReservation.getStartDate().getTimeInMillis()) / (1000 * 60 * 60 * 24) + 1;
+                    long newDays = (newEndDate.getTimeInMillis() - selectedReservation.getStartDate().getTimeInMillis()) / (1000 * 60 * 60 * 24) + 1;
+                    double priceDifference = (newDays - oldDays) * selectedHotel.getRoomById(selectedReservation.getRoomId()).getPricePerNight();
+                    selectedReservation.setEndDate(newEndDate);
+                    selectedReservation.setPrice(selectedReservation.getPrice() + priceDifference);
+                    System.out.println("End date and price updated successfully.");
+                    break;
+                }
+            }
+            break;
+        case 4:
+            while (true) {
+                System.out.println("Enter new room ID:");
+                int newRoomId = Integer.parseInt(scanner.nextLine());
+                Room newRoom = selectedHotel.getRoomById(newRoomId);
+                if (newRoom == null) {
+                    System.out.println("Error: Room not found. Please enter a valid room ID.");
+                    continue;
+                }
+                if (selectedReservation.validateDateChange(selectedReservation.getStartDate(), selectedReservation.getEndDate(), newRoomId, selectedHotel)) {
+                    double oldRoomPrice = selectedHotel.getRoomById(selectedReservation.getRoomId()).getPricePerNight();
+                    double newRoomPrice = newRoom.getPricePerNight();
+                    long days = (selectedReservation.getEndDate().getTimeInMillis() - selectedReservation.getStartDate().getTimeInMillis()) / (1000 * 60 * 60 * 24) + 1;
+                    double priceDifference = (newRoomPrice - oldRoomPrice) * days;
+                    selectedReservation.setPrice(selectedReservation.getPrice() + priceDifference);
+                    selectedReservation.setRoomId(newRoomId);
+                    System.out.println("Room ID and price updated successfully.");
+                    break;
+                }
+            }
+            break;
+        case 5:
+            System.out.println("Error: You must cancel the reservation and make a new one to change the hotel.");
+            break;
+        case 6:
+            System.out.println("Error: Price cannot be changed.");
+            break;
+        default:
+            System.out.println("Invalid choice.");
+            break;
+    }
+}   
    
    public void cancelReservation(List<Hotel> hotels, List<PaymentProcessorCompany> companies) {
 	    Scanner scanner = new Scanner(System.in);
@@ -673,5 +820,15 @@ public void sendPayment(Payment payment) {
 	    // Call the refundPayment method from the Payment class
     	    Payment.refundPayment(selectedReservation.getPrice(), this, companies);
     	}
+   
+   
+   
 
+   
+   
+   
+   
+   
+   
+   
 }
