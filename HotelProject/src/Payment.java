@@ -9,7 +9,7 @@ public class Payment {
     private double price;
     private Customer customer;
     private PaymentProcessorCompany paymentProcessorCompany;
-
+    private boolean processed; // Add this field
     // Default constructor
     public Payment() {
     }
@@ -22,6 +22,14 @@ public class Payment {
         this.price = price;
         this.customer = customer;
         this.paymentProcessorCompany = paymentProcessorCompany;
+    }
+    
+    public boolean isProcessed() {
+        return processed;
+    }
+
+    public void setProcessed(boolean processed) {
+        this.processed = processed;
     }
 
     // Getters and Setters
@@ -83,6 +91,7 @@ public class Payment {
                 ", paymentDate=" + (paymentDate != null ? paymentDate.getTime() : null) +
                 ", price=" + price +
                 ", customer=" + customer +
+                ", processed=" + processed +
                 ", paymentProcessorCompany=" + paymentProcessorCompany +
                 '}';
     }

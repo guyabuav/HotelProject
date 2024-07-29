@@ -89,7 +89,7 @@ public class PaymentProcessorCompany {
     
 
     // Method to add a payment
-    public void addPayment(Payment payment, Hotel hotel) {
+    public void addPaymentConfirmation(Payment payment, Hotel hotel) {
         String validationMessage = paymentValidation(payment);
         if (validationMessage.equals("Payment confirmed")) {
             payments.add(payment);
@@ -108,7 +108,6 @@ public class PaymentProcessorCompany {
         }
     }
 
-    // Optional: toString method for easier debugging and logging
     @Override
     public String toString() {
         return "PaymentProcessorCompany{" +

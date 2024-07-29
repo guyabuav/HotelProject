@@ -7,9 +7,11 @@ public class PaymentConfirmation {
     private double price;
     private PaymentProcessorCompany paymentProcessorCompany;
     private Hotel hotel;
+    private boolean notified; // Add this field
 
     // Default constructor
     public PaymentConfirmation() {
+        this.notified = false;
     }
 
     // Parameterized constructor
@@ -20,6 +22,7 @@ public class PaymentConfirmation {
         this.price = price;
         this.paymentProcessorCompany = paymentProcessorCompany;
         this.hotel = hotel;
+        this.notified = false; // Initialize as false
     }
 
     // Getters and Setters
@@ -29,6 +32,15 @@ public class PaymentConfirmation {
 
     public void setConfirmationId(String confirmationId) {
         this.confirmationId = confirmationId;
+    }
+    
+    // Add getter and setter for notified
+    public boolean isNotified() {
+        return notified;
+    }
+
+    public void setNotified(boolean notified) {
+        this.notified = notified;
     }
 
     public String getPaymentMethod() {

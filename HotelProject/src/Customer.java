@@ -1,7 +1,12 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Scanner;
@@ -378,6 +383,7 @@ public static Customer authenticate(List<Customer> customers, String username, S
     return null;
 }
 
+
 public void sendPayment(Payment payment) {
     PaymentProcessorCompany company = payment.getPaymentProcessorCompany();
     if (company != null ) {
@@ -640,7 +646,7 @@ public void removeGuest(Hotel hotel, Reservation reservation) {
     System.out.println("Guests removed successfully. New number of guests: " + newGuestCount);
 }
 
-public void editReservation(List<Hotel> hotels) {
+public void editReservation(List<Hotel> hotels, List<PaymentProcessorCompany> companies) {
     Scanner scanner = new Scanner(System.in);
 
     // Prompt the user to select a hotel by ID
@@ -720,6 +726,7 @@ public void editReservation(List<Hotel> hotels) {
                     selectedReservation.setStartDate(newStartDate);
                     selectedReservation.setPrice(selectedReservation.getPrice() + priceDifference);
                     System.out.println("Start date and price updated successfully.");
+                    handlePaymentAdjustment(priceDifference, selectedReservation, companies);
                     break;
                 }
             }
@@ -749,6 +756,7 @@ public void editReservation(List<Hotel> hotels) {
                     selectedReservation.setEndDate(newEndDate);
                     selectedReservation.setPrice(selectedReservation.getPrice() + priceDifference);
                     System.out.println("End date and price updated successfully.");
+                    handlePaymentAdjustment(priceDifference, selectedReservation, companies);
                     break;
                 }
             }
@@ -770,6 +778,7 @@ public void editReservation(List<Hotel> hotels) {
                     selectedReservation.setPrice(selectedReservation.getPrice() + priceDifference);
                     selectedReservation.setRoomId(newRoomId);
                     System.out.println("Room ID and price updated successfully.");
+                    handlePaymentAdjustment(priceDifference, selectedReservation, companies);
                     break;
                 }
             }
@@ -822,9 +831,32 @@ public void editReservation(List<Hotel> hotels) {
     	}
    
    
-   
+   private void handlePaymentAdjustment(double priceDifference, Reservation reservation, List<PaymentProcessorCompany> companies) {
+       if (priceDifference > 0) {
+           System.out.println("Additional cost of " + priceDifference + " has been added to your payment.");
+       } else if (priceDifference < 0) {
+           System.out.println("Refund of " + Math.abs(priceDifference) + " has been issued to you.");
+       }
 
+       for (PaymentProcessorCompany company : companies) {
+           for (Payment payment : company.getPayments()) {
+               if (payment.getCustomer().equals(this) && payment.getPrice() == reservation.getPrice() - priceDifference) {
+                   payment.setPrice(reservation.getPrice());
+                   return;
+               }
+           }
+       }
+   }
    
+   public static void logLoginDetails(Customer customer) {
+       try (BufferedWriter writer = new BufferedWriter(new FileWriter("logins.txt", true))) {
+           String currentTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+           writer.write("Customer: " + customer.toString() + ", Login Time: " + currentTime);
+           writer.newLine();
+       } catch (IOException e) {
+           System.err.println("Error writing to log file: " + e.getMessage());
+       }
+   }
    
    
    

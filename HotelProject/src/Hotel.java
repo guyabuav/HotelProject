@@ -229,6 +229,17 @@ public class Hotel {
         System.out.println("Hotel not found\n");
         return null;
     }
+    
+    public boolean hasPayment(Payment payment) {
+        for (PaymentConfirmation confirmation : confirmations) {
+            if (confirmation.getPaymentMethod().equals(payment.getPaymentMethod()) &&
+                confirmation.getPrice() == payment.getPrice() &&
+                confirmation.getPaymentProcessorCompany().equals(payment.getPaymentProcessorCompany())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 
 
