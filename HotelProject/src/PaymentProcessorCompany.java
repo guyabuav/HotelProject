@@ -80,7 +80,6 @@ public class PaymentProcessorCompany {
 
 	// Method to send payment confirmation
 	public PaymentConfirmation sendPaymentConfirmation(PaymentConfirmation confirmation) {
-		// Simulating sending payment confirmation to the hotel
 		System.out.println("Sending payment confirmation: " + confirmation);
 		return confirmation;
 	}
@@ -92,12 +91,12 @@ public class PaymentProcessorCompany {
 		if (validationMessage.equals("Payment confirmed")) {
 			payments.add(payment);
 			PaymentConfirmation confirmation = new PaymentConfirmation(
-					"CONF" + payment.getPaymentId(), // Generate a confirmation ID
-					payment.getPaymentMethod(), // Use the payment method from the payment
-					new GregorianCalendar(), // Use the current date as the confirmation date
-					payment.getPrice(), // Use the price from the payment
-					this, // PaymentProcessorCompany reference
-					hotel // Hotel reference
+					"CONF" + payment.getPaymentId(), 
+					payment.getPaymentMethod(), 
+					new GregorianCalendar(), 
+					payment.getPrice(), 
+					this, 
+					hotel 
 					);
 			hotel.addPaymentConfirmation(confirmation);
 			sendPaymentConfirmation(confirmation);
@@ -106,7 +105,6 @@ public class PaymentProcessorCompany {
 		}
 	}
 
-	@Override
 	public String toString() {
 		return "Payment Processor Company{" +
 				"Company Name='" + companyName + '\'' +

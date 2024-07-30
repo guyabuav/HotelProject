@@ -15,10 +15,8 @@ public class Customer {
 	private String username;
 	private String password;
 
-	// Default constructor
 	public Customer() {}
 
-	// Parameterized constructor
 	public Customer(String telephone, String name, String id, String address, String username, String password) {
 		this.telephone = telephone;
 		this.name = name;
@@ -28,7 +26,6 @@ public class Customer {
 		this.password = password;
 	}
 
-	// Getters and Setters
 	public String getTelephone() {
 		return telephone;
 	}
@@ -77,8 +74,6 @@ public class Customer {
 		this.password = password;
 	}
 
-	//Optional: toString method for easier debugging and logging
-	@Override
 	public String toString() {
 		return "Customer{" +
 				"Name='" + name + '\'' +
@@ -90,7 +85,6 @@ public class Customer {
 				'}';
 	}
 
-	// GUI for updating profile
 	public void updateProfileGUI() {
 		Dialog dialog = new Dialog((Frame) null, "Update Profile", true); // Modal dialog
 
@@ -131,7 +125,6 @@ public class Customer {
 		dialog.add(btnUpdate);
 
 		btnUpdate.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				telephone = tfTelephone.getText();
 				name = tfName.getText();
@@ -140,7 +133,7 @@ public class Customer {
 				username = tfUsername.getText();
 				password = tfPassword.getText();
 
-				dialog.dispose(); // Close the dialog
+				dialog.dispose();
 			}
 		});
 
@@ -149,7 +142,6 @@ public class Customer {
 	}
 
 
-	// Method to select a hotel from a list
 	private Hotel selectHotel(List<Hotel> hotels) {
 		Scanner scanner = new Scanner(System.in);
 		System.out.println("Select a hotel:");
@@ -166,7 +158,6 @@ public class Customer {
 		return null;
 	}
 
-	//Method to create a reservation
 	public void createReservation(List<Hotel> hotels, List<PaymentProcessorCompany> companies, Room selectedRoom) {
 
 		Hotel hotel = null;
@@ -232,36 +223,30 @@ public class Customer {
 			} else if (startDate.before(today) || endDate.before(today)) {
 				System.out.println("Error: Dates cannot be in the past\n");
 			} else {
-				break; // Dates are valid, exit the loop
+				break; 
 			}
 		}
 
-		//		System.out.println("Enter room ID:");
 		int roomId = selectedRoom.getRoomId();
 
-		GregorianCalendar reservationDate = new GregorianCalendar(); // Today's date
+		GregorianCalendar reservationDate = new GregorianCalendar(); 
 
-		// Check if the room is available
 		if (!hotel.checkAvailableRooms(startDate, endDate).contains(roomId)) {
 			System.out.println("Error: Room is not available\n");
 			return;
 		}
 
-		// Check if the number of guests is within the room's capacity
 		if (selectedRoom == null || !selectedRoom.capacityCheck(numOfGuests)) {
 			System.out.println("Error: Room capacity exceeded or room not found\n");
 			return;
 		}
 
-		// Calculate the price based on the room's price per night
 		long diffInMillies = endDate.getTimeInMillis() - startDate.getTimeInMillis();
-		long days = (diffInMillies / (1000 * 60 * 60 * 24)) + 1; // +1 to include the end date
+		long days = (diffInMillies / (1000 * 60 * 60 * 24)) + 1; 
 		double price = days * selectedRoom.getPricePerNight();
 
-		// Print the calculated price to the user
 		System.out.println("\nThe total price for the reservation is: " + price);
 
-		// Create and save the reservation
 		Reservation reservation = new Reservation(
 				numOfGuests, reservationDate, startDate, endDate, selectedRoom.getRoomId(), price, this, hotel);
 
@@ -270,7 +255,6 @@ public class Customer {
 		this.createPayment(price, companies);
 	}
 
-	//Helper method to validate date format and ranges
 	private boolean isValidDate(String[] dateInput) {
 		if (dateInput.length != 3) return false;
 		try {
@@ -595,7 +579,7 @@ public class Customer {
 		System.out.println("5. Hotel ID (Cannot be changed)");
 		System.out.println("6. Price (Cannot be changed)");
 		int fieldChoice = scanner.nextInt();
-
+		scanner.nextLine();
 		GregorianCalendar today = new GregorianCalendar();
 		today.set(GregorianCalendar.HOUR_OF_DAY, 0);
 		today.set(GregorianCalendar.MINUTE, 0);
