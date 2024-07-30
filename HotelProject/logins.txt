@@ -18,3 +18,22 @@ Customer: Customer{telephone='0525515555', name='guy ab', id='12345', address='H
 Customer: Customer{telephone='0525515555', name='guy ab', id='12345', address='Haifa', username='guyab', password='12345'}, Login Time: 2024-07-29 14:37:49
 Customer: Customer{telephone='0525515555', name='guy ab', id='12345', address='Haifa', username='guyab', password='12345'}, Login Time: 2024-07-29 14:41:14
 Customer: Customer{telephone='0525515555', name='guy ab', id='12345', address='Haifa', username='guyab', password='12345'}, Login Time: 2024-07-29 14:52:29
+Customer: Customer{telephone='0525515555', name='guy ab', id='12345', address='Haifa', username='guyab', password='12345'}, Login Time: 2024-07-30 00:34:09
+Customer: Customer{telephone='0525515555', name='guy ab', id='12345', address='Haifa', username='guyab', password='12345'}, Login Time: 2024-07-30 00:35:31
+Customer: Customer{telephone='0525515555', name='guy ab', id='12345', address='Haifa', username='guyab', password='12345'}, Login Time: 2024-07-30 12:17:15
+Customer: Customer{telephone='0525515555', name='guy ab', id='12345', address='Haifa', username='guyab', password='12345'}, Login Time: 2024-07-30 12:18:16
+Customer: Customer{telephone='0525515555', name='guy ab', id='12345', address='Haifa', username='guyab', password='12345'}, Login Time: 2024-07-30 12:18:32
+Customer: Customer{telephone='0525515555', name='guy ab', id='12345', address='Haifa', username='guyab', password='12345'}, Login Time: 2024-07-30 12:20:01
+Customer: Customer{telephone='0525515555', name='guy ab', id='12345', address='Haifa', username='guyab', password='12345'}, Login Time: 2024-07-30 12:21:53
+Customer: Customer{Name='guy ab', Telephone='0525515555', Id='12345', Address='Haifa', Username='guyab', Password='12345'}, Login Time: 2024-07-30 12:33:52
+Customer: Customer{Name='guy ab', Telephone='0525515555', Id='12345', Address='Haifa', Username='guyab', Password='12345'}, Login Time: 2024-07-30 13:18:23
+Customer: Customer{Name='guy ab', Telephone='0525515555', Id='12345', Address='Haifa', Username='guyab', Password='12345'}, Login Time: 2024-07-30 13:19:51
+Customer: Customer{Name='admin user', Telephone='0521234567', Id='admin123', Address='Admin City', Username='admin', Password='adminpass'}, Login Time: 2024-07-30 13:20:37
+Customer: Customer{Name='guy ab', Telephone='0525515555', Id='12345', Address='Haifa', Username='guyab', Password='12345'}, Login Time: 2024-07-30 13:26:39
+Customer: Customer{Name='guy ab', Telephone='0525515555', Id='12345', Address='Haifa', Username='guyab', Password='12345'}, Login Time: 2024-07-30 13:27:06
+Customer: Customer{Name='guy ab', Telephone='0525515555', Id='12345', Address='Haifa', Username='guyab', Password='12345'}, Login Time: 2024-07-30 13:28:03
+Customer: Customer{Name='guy ab', Telephone='0525515555', Id='12345', Address='Haifa', Username='guyab', Password='12345'}, Login Time: 2024-07-30 13:30:42
+Customer: Customer{Name='guy ab', Telephone='0525515555', Id='12345', Address='Haifa', Username='guyab', Password='12345'}, Login Time: 2024-07-30 13:35:48
+Customer: Customer{Name='guy ab', Telephone='0525515555', Id='12345', Address='Haifa', Username='guyab', Password='12345'}, Login Time: 2024-07-30 13:43:13
+Customer: Customer{Name='guy ab', Telephone='0525515555', Id='12345', Address='Haifa', Username='guyab', Password='12345'}, Login Time: 2024-07-30 13:43:57
+Customer: Customer{Name='guy ab', Telephone='0525515555', Id='12345', Address='Haifa', Username='guyab', Password='12345'}, Login Time: 2024-07-30 16:15:52
