@@ -17,7 +17,6 @@ public class mainMethod {
 		final String ANSI_BOLD = "\u001B[1m";
 		final String ANSI_BLUE = "\u001B[34m";
 		final String ANSI_RED = "\u001B[31m";
-		final String ANSI_GREEN = "\u001B[32m";
 
 		List<Room> availableRooms = new ArrayList<>();
 		int optionNumber = 1;
@@ -48,9 +47,6 @@ public class mainMethod {
 	}
 
 	private static Customer signUp(){
-		final String ANSI_RESET = "\u001B[0m";
-		final String ANSI_BOLD = "\u001B[1m";
-		final String ANSI_BLUE = "\u001B[34m";
 		Customer c = new Customer();
 		Dialog dialog = new Dialog((Frame) null, "Update Profile", true); // Modal dialog
 
@@ -113,7 +109,6 @@ public class mainMethod {
 		final String ANSI_BOLD = "\u001B[1m";
 		final String ANSI_BLUE = "\u001B[34m";
 		final String ANSI_RED = "\u001B[31m";
-		final String ANSI_GREEN = "\u001B[32m";
 
 		// DB
 		Customer c1 = new Customer("0525515555", "guy ab", "12345", "Haifa", "guyab", "12345");
@@ -178,6 +173,9 @@ public class mainMethod {
 			switch (choice) {
 			case 1:
 				Room selectedRoom = displayAvailableRooms(hotels, scanner);
+				if (selectedRoom == null) {
+					break;
+				}
 				System.out.println("You selected: Room for " + selectedRoom.getMaxCapacity() + " at $" + selectedRoom.getPricePerNight() + " per night\n");
 				System.out.println("To complete the reservation you need to login (enter 1) or sign up (enter 2):");
 				Scanner subscan = new Scanner(System.in);
@@ -193,13 +191,11 @@ public class mainMethod {
 					} catch (Exception e) {
 						System.out.println(ANSI_RED + "\nAn error occurred during authentication"+ ANSI_RESET);
 					}
-				}
-				if (opt == 2) {
+				}else if (opt == 2) {
 					Customer c = signUp();
 					customers.add(c);
 					c.createReservation(hotels, companies, selectedRoom);
-				}
-				else {
+				}else{
 					System.out.println("\nYou entered wrong choice, please try again...");
 				}
 				break;
@@ -252,9 +248,7 @@ public class mainMethod {
 	private static void displayCustomerMenu(Scanner scanner, Customer loggedInCustomer, List<Hotel> hotels, List<PaymentProcessorCompany> companies) {
 		final String ANSI_RESET = "\u001B[0m";
 		final String ANSI_BOLD = "\u001B[1m";
-		final String ANSI_BLUE = "\u001B[34m";
-		final String ANSI_RED = "\u001B[31m";
-		final String ANSI_GREEN = "\u001B[32m";
+
 		while (true) {
 			System.out.println(ANSI_BOLD + "What do you want to do?:" + ANSI_RESET);
 			System.out.println("1. Update Profile");
@@ -263,7 +257,7 @@ public class mainMethod {
 			System.out.println("4. Cancel Reservation");
 			System.out.println("5. Exit");
 
-			int choice = Integer.parseInt(scanner.nextLine());
+			int choice = scanner.nextInt();
 
 			switch (choice) {
 			case 1:
@@ -302,7 +296,7 @@ public class mainMethod {
 			System.out.println("3. View Logs");
 			System.out.println("4. Exit");
 
-			int choice = Integer.parseInt(scanner.nextLine());
+			int choice = scanner.nextInt();
 
 			switch (choice) {
 			case 1:

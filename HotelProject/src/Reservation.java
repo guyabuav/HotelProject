@@ -165,7 +165,7 @@ public class Reservation {
 		System.out.println("Enter the new value for " + field + ":");
 		switch (field) {
 		case "numofguests":
-			int newNumOfGuests = Integer.parseInt(scanner.nextLine());
+			int newNumOfGuests = scanner.nextInt();
 			Room room = hotel.getRoomById(roomId);
 			if (room == null || newNumOfGuests > room.getMaxCapacity()) {
 				System.out.println("Error: Number of guests exceeds room capacity or room not found.");
@@ -200,7 +200,7 @@ public class Reservation {
 			System.out.println("roomId updated successfully.");
 			break;
 		case "price":
-			double newPrice = Double.parseDouble(scanner.nextLine());
+			double newPrice = scanner.nextDouble();
 			setPrice(newPrice);
 			System.out.println("price updated successfully.");
 			break;

@@ -180,18 +180,18 @@ public class Hotel {
 		System.out.println("Enter the new value for " + field + ":");
 		switch (field) {
 		case "roomid":
-			int newRoomId = Integer.parseInt(scanner.nextLine());
+			int newRoomId = scanner.nextInt();
 			if (getRoomById(newRoomId) != null) {
 				return "Error: Room with this new ID already exists.";
 			}
 			room.setRoomId(newRoomId);
 			break;
 		case "maxcapacity":
-			int newMaxCapacity = Integer.parseInt(scanner.nextLine());
+			int newMaxCapacity = scanner.nextInt();
 			room.setMaxCapacity(newMaxCapacity);
 			break;
 		case "pricepernight":
-			double newPricePerNight = Double.parseDouble(scanner.nextLine());
+			double newPricePerNight = scanner.nextDouble();
 			room.setPricePerNight(newPricePerNight);
 			break;
 		default:
