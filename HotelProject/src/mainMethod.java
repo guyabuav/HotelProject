@@ -1,3 +1,11 @@
+import java.awt.Button;
+import java.awt.Dialog;
+import java.awt.Frame;
+import java.awt.GridLayout;
+import java.awt.Label;
+import java.awt.TextField;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.*;
 
@@ -43,20 +51,60 @@ public class mainMethod {
 		final String ANSI_RESET = "\u001B[0m";
 		final String ANSI_BOLD = "\u001B[1m";
 		final String ANSI_BLUE = "\u001B[34m";
-		Scanner scanner = new Scanner(System.in);
-		System.out.println(ANSI_BOLD + ANSI_BLUE + "Choose username:" + ANSI_RESET);
-		String username = scanner.nextLine();
-		System.out.println(ANSI_BOLD + ANSI_BLUE + "\nChoose password:" + ANSI_RESET);
-		String password = scanner.nextLine();
-		System.out.println(ANSI_BOLD + ANSI_BLUE + "\nEnter name:" + ANSI_RESET);
-		String name = scanner.nextLine();
-		System.out.println(ANSI_BOLD + ANSI_BLUE + "\nEnter telephone:" + ANSI_RESET);
-		String telephone = scanner.nextLine();
-		System.out.println(ANSI_BOLD + ANSI_BLUE + "\nEnter id:" + ANSI_RESET);
-		String id = scanner.nextLine();
-		System.out.println(ANSI_BOLD + ANSI_BLUE + "\nEnter address:" + ANSI_RESET);
-		String address = scanner.nextLine();
-		Customer c = new Customer(telephone, name, id, address, username, password);
+		Customer c = new Customer();
+		Dialog dialog = new Dialog((Frame) null, "Update Profile", true); // Modal dialog
+
+		dialog.setLayout(new GridLayout(7, 2));
+
+		Label labelTelephone = new Label("Telephone:");
+		TextField tfTelephone = new TextField(c.getTelephone());
+		dialog.add(labelTelephone);
+		dialog.add(tfTelephone);
+
+		Label labelName = new Label("Name:");
+		TextField tfName = new TextField(c.getName());
+		dialog.add(labelName);
+		dialog.add(tfName);
+
+		Label labelId = new Label("ID:");
+		TextField tfId = new TextField(c.getId());
+		dialog.add(labelId);
+		dialog.add(tfId);
+
+		Label labelAddress = new Label("Address:");
+		TextField tfAddress = new TextField(c.getAddress());
+		dialog.add(labelAddress);
+		dialog.add(tfAddress);
+
+		Label labelUsername = new Label("Username:");
+		TextField tfUsername = new TextField(c.getUsername());
+		dialog.add(labelUsername);
+		dialog.add(tfUsername);
+
+		Label labelPassword = new Label("Password:");
+		TextField tfPassword = new TextField(c.getPassword());
+		dialog.add(labelPassword);
+		dialog.add(tfPassword);
+
+		Button btnUpdate = new Button("Update");
+		dialog.add(new Label());
+		dialog.add(btnUpdate);
+
+		btnUpdate.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				c.setTelephone(tfTelephone.getText());
+				c.setName(tfName.getText());
+				c.setId(tfId.getText()); 
+				c.setAddress(tfAddress.getText());
+				c.setUsername(tfUsername.getText());
+				c.setPassword(tfPassword.getText());
+				dialog.dispose(); // Close the dialog
+			}
+		});
+
+		dialog.setSize(400, 300);
+		dialog.setVisible(true);
 		return c;
 	}
 
