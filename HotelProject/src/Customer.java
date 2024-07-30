@@ -186,7 +186,7 @@ public class Customer {
 		int numOfGuests;
 		do {
 			System.out.println("Enter number of guests:");
-			numOfGuests = scanner.nextInt();
+			numOfGuests = Integer.parseInt(scanner.nextLine());
 			if (numOfGuests <= 0 || selectedRoom.capacityCheck(numOfGuests)) {
 				System.out.println("Error: Number of guests must be greater than 0.");
 			}
