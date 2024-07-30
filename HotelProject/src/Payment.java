@@ -1,109 +1,108 @@
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.*;
 
 public class Payment {
-    private static int nextPaymentId = 1;
-    private int paymentId;
-    private String paymentMethod;
-    private GregorianCalendar paymentDate;
-    private double price;
-    private Customer customer;
-    private PaymentProcessorCompany paymentProcessorCompany;
-    private boolean processed; // Add this field
-    // Default constructor
-    public Payment() {
-    }
+	private static int nextPaymentId = 1;
+	private int paymentId;
+	private String paymentMethod;
+	private GregorianCalendar paymentDate;
+	private double price;
+	private Customer customer;
+	private PaymentProcessorCompany paymentProcessorCompany;
+	private boolean processed; // Add this field
+	// Default constructor
+	public Payment() {
+	}
 
-    // Parameterized constructor
-    public Payment(String paymentMethod, GregorianCalendar paymentDate, double price, Customer customer, PaymentProcessorCompany paymentProcessorCompany) {
-    	this.paymentId = nextPaymentId++;
-        this.paymentMethod = paymentMethod;
-        this.paymentDate = paymentDate;
-        this.price = price;
-        this.customer = customer;
-        this.paymentProcessorCompany = paymentProcessorCompany;
-    }
-    
-    public boolean isProcessed() {
-        return processed;
-    }
+	// Parameterized constructor
+	public Payment(String paymentMethod, GregorianCalendar paymentDate, double price, Customer customer, PaymentProcessorCompany paymentProcessorCompany) {
+		this.paymentId = nextPaymentId++;
+		this.paymentMethod = paymentMethod;
+		this.paymentDate = paymentDate;
+		this.price = price;
+		this.customer = customer;
+		this.paymentProcessorCompany = paymentProcessorCompany;
+	}
 
-    public void setProcessed(boolean processed) {
-        this.processed = processed;
-    }
+	public boolean isProcessed() {
+		return processed;
+	}
 
-    // Getters and Setters
-    public int getPaymentId() {
-        return paymentId;
-    }
+	public void setProcessed(boolean processed) {
+		this.processed = processed;
+	}
 
-    public void setPaymentId(int paymentId) {
-        this.paymentId = paymentId;
-    }
+	// Getters and Setters
+	public int getPaymentId() {
+		return paymentId;
+	}
 
-    public String getPaymentMethod() {
-        return paymentMethod;
-    }
+	public void setPaymentId(int paymentId) {
+		this.paymentId = paymentId;
+	}
 
-    public void setPaymentMethod(String paymentMethod) {
-        this.paymentMethod = paymentMethod;
-    }
+	public String getPaymentMethod() {
+		return paymentMethod;
+	}
 
-    public GregorianCalendar getPaymentDate() {
-        return paymentDate;
-    }
+	public void setPaymentMethod(String paymentMethod) {
+		this.paymentMethod = paymentMethod;
+	}
 
-    public void setPaymentDate(GregorianCalendar paymentDate) {
-        this.paymentDate = paymentDate;
-    }
+	public GregorianCalendar getPaymentDate() {
+		return paymentDate;
+	}
 
-    public double getPrice() {
-        return price;
-    }
+	public void setPaymentDate(GregorianCalendar paymentDate) {
+		this.paymentDate = paymentDate;
+	}
 
-    public void setPrice(double price) {
-        this.price = price;
-    }
+	public double getPrice() {
+		return price;
+	}
 
-    public Customer getCustomer() {
-        return customer;
-    }
+	public void setPrice(double price) {
+		this.price = price;
+	}
 
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
-    }
+	public Customer getCustomer() {
+		return customer;
+	}
 
-    public PaymentProcessorCompany getPaymentProcessorCompany() {
-        return paymentProcessorCompany;
-    }
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
+	}
 
-    public void setPaymentProcessorCompany(PaymentProcessorCompany paymentProcessorCompany) {
-        this.paymentProcessorCompany = paymentProcessorCompany;
-    }
-    
+	public PaymentProcessorCompany getPaymentProcessorCompany() {
+		return paymentProcessorCompany;
+	}
 
-    // Optional: toString method for easier debugging and logging
-    @Override
-    public String toString() {
-        return "Payment{" +
-                "paymentId='" + paymentId + '\'' +
-                ", paymentMethod='" + paymentMethod + '\'' +
-                ", paymentDate=" + (paymentDate != null ? paymentDate.getTime() : null) +
-                ", price=" + price +
-                ", customer=" + customer +
-                ", processed=" + processed +
-                ", paymentProcessorCompany=" + paymentProcessorCompany +
-                '}';
-    }
-    
-    public static void refundPayment(double amount, Customer customer, List<PaymentProcessorCompany> companies) {
-        // Send refund message to customer
-        System.out.println("Refunding " + amount + " to customer " + customer.getName());
+	public void setPaymentProcessorCompany(PaymentProcessorCompany paymentProcessorCompany) {
+		this.paymentProcessorCompany = paymentProcessorCompany;
+	}
 
-        // Delete the payment from the list of payments in PaymentProcessorCompany
-        for (PaymentProcessorCompany company : companies) {
-            company.getPayments().removeIf(payment -> payment.getCustomer().equals(customer) && payment.getPrice() == amount);
-        }
-    }
+
+	// Optional: toString method for easier debugging and logging
+	@Override
+	public String toString() {
+		return "Payment{" +
+				"Payment Id='" + paymentId + '\'' +
+				", Payment Method='" + paymentMethod + '\'' +
+				", Payment Date=" + (paymentDate != null ? paymentDate.getTime() : null) +
+				", Price=" + price +
+				", Customer=" + customer +
+				", Processed=" + processed +
+				", Payment Processor Company=" + paymentProcessorCompany +
+				'}';
+	}
+
+	public static void refundPayment(double amount, Customer customer, List<PaymentProcessorCompany> companies) {
+		// Send refund message to customer
+		System.out.println("Refunding " + amount + " to customer " + customer.getName());
+
+		// Delete the payment from the list of payments in PaymentProcessorCompany
+		for (PaymentProcessorCompany company : companies) {
+			company.getPayments().removeIf(payment -> payment.getCustomer().equals(customer) && payment.getPrice() == amount);
+		}
+	}
 
 }
